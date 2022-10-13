@@ -2,7 +2,12 @@ name: train
  
 on:
   workflow_dispatch
- 
+
+permissions:
+  id-token: write
+  contents: write
+  pull-requests: write
+
 jobs:
   run:
     runs-on: [ubuntu-latest]
