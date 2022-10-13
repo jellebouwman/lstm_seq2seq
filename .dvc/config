@@ -1,0 +1,4 @@
+[core]
+    remote = s3cache
+['remote "s3cache"']
+    url = s3://lstm-seq2seq/cache
