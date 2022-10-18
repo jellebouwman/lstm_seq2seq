@@ -10,6 +10,7 @@ permissions:
 
 jobs:
   run:
+    environment: aws
     runs-on: [ubuntu-latest]
  
     steps:
