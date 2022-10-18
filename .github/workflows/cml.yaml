@@ -42,4 +42,4 @@ jobs:
           dvc pull 
           dvc exp run
  
-          cml pr create
+          cml pr create .
