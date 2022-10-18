@@ -36,6 +36,7 @@ jobs:
         env:
           REPO_TOKEN: ${{ secrets.GITHUB_TOKEN }}
         run: |
+          cml ci --unshallow
           pip install -r requirements.txt
 
           dvc pull 
