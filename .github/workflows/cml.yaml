@@ -42,5 +42,8 @@ jobs:
 
           dvc pull 
           dvc exp run
+          dvc push
  
-          cml pr create .
+          git add .
+          git commit -m "experiment results"
+          git push
