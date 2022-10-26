@@ -1,6 +1,16 @@
 name: train
  
-on: [workflow_dispatch, push]
+on:
+  workflow_dispatch:
+    inputs:
+      batch_size:
+        description: Batch size for training.
+        required: true
+        type: string
+      latent_dim:
+        description: Latent dimensionality of the encoding space.
+        required: true
+        type: string
 
 permissions:
   id-token: write
@@ -41,9 +51,7 @@ jobs:
           pip install -r requirements.txt
 
           dvc pull 
-          dvc exp run
-          dvc push
- 
-          git add .
-          git commit -m "experiment results"
-          git push
+          dvc exp run \
+            -S params.py:batch_size=${{ input.batch_size }} \
+            -S params.py:latent_dim=${{ input.latent_dim }}
+          dvc exp push --rev HEAD origin
