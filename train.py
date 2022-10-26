@@ -1,5 +1,6 @@
 import numpy as np
 import tensorflow as tf
+import tensorflow_addons as tfa
 from tensorflow import keras
 from dvclive.keras import DvcLiveCallback
 
@@ -89,6 +90,7 @@ decoder_outputs = decoder_dense(decoder_outputs)
 # Define the model that will turn
 # `encoder_input_data` & `decoder_input_data` into `decoder_target_data`
 weights_path = "model/weights.hdf5"
+os.mkdir("model", exists_ok=True)
 try:
     model.load_weights(weights_path)
 except:
@@ -102,19 +104,24 @@ except:
     )
 
 
-live = DvcLiveCallback(path="results", report=None)
+live = DvcLiveCallback(path="results", report=None, resume=True)
 checkpoint = keras.callbacks.ModelCheckpoint(
    weights_path,
    save_best_only=True,
    save_weights_only=True,
    verbose=True)
 reduce_lr = keras.callbacks.ReduceLROnPlateau(monitor="val_accuracy", 
-                                              patience=3, verbose=True)
+                                              patience=3,
+                                              verbose=True)
+early_stop = keras.callbacks.EarlyStopping(monitor="val_accuracy",
+                                           patience=10,
+                                           verbose=True)
+time_stop = tfa.callbacks.TimeStopping(seconds=3600, verbose=1)
 hist = model.fit(
     [encoder_input_data, decoder_input_data],
     decoder_target_data,
     batch_size=batch_size,
     epochs=epochs,
     validation_split=0.2,
-    callbacks=[live, checkpoint, reduce_lr]
+    callbacks=[live, checkpoint, reduce_lr, early_stop, time_stop]
 )
