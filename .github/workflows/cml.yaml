@@ -52,6 +52,6 @@ jobs:
 
           dvc pull 
           dvc exp run \
-            -S params.py:batch_size=${{ input.batch_size }} \
-            -S params.py:latent_dim=${{ input.latent_dim }}
+            -S params.py:batch_size=${{ inputs.batch_size }} \
+            -S params.py:latent_dim=${{ inputs.latent_dim }}
           dvc exp push --rev HEAD origin
