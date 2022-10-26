@@ -1,3 +1,4 @@
+import os
 import numpy as np
 import tensorflow as tf
 import tensorflow_addons as tfa
@@ -12,7 +13,9 @@ target_texts = []
 input_characters = set()
 target_characters = set()
 with open(data_path, "r", encoding="utf-8") as f:
-    lines = f.read().split("\n")
+    lines = f.read().split("\n")[:-1]
+np.random.seed(seed)
+np.random.shuffle(lines)
 for line in lines[: min(num_samples, len(lines) - 1)]:
     input_text, target_text, _ = line.split("\t")
     # We use "tab" as the "start sequence" character
@@ -90,7 +93,7 @@ decoder_outputs = decoder_dense(decoder_outputs)
 # Define the model that will turn
 # `encoder_input_data` & `decoder_input_data` into `decoder_target_data`
 weights_path = "model/weights.hdf5"
-os.mkdir("model", exists_ok=True)
+os.makedirs("model", exist_ok=True)
 try:
     model.load_weights(weights_path)
 except:
