@@ -88,16 +88,33 @@ decoder_outputs = decoder_dense(decoder_outputs)
 
 # Define the model that will turn
 # `encoder_input_data` & `decoder_input_data` into `decoder_target_data`
-model = keras.Model([encoder_inputs, decoder_inputs], decoder_outputs)
+weights_path = "model/weights.hdf5"
+try:
+    model.load_weights(weights_path)
+except:
+    print(f"Unable to load weights from {weights_path}. Compiling new model.")
+    model = keras.Model([encoder_inputs, decoder_inputs], decoder_outputs)
+    optimizer = keras.optimizers.RMSprop(lr=lr)
+    model.compile(
+        optimizer="rmsprop",
+        loss="categorical_crossentropy",
+        metrics=["accuracy"]
+    )
 
-model.compile(
-    optimizer="rmsprop", loss="categorical_crossentropy", metrics=["accuracy"]
-)
-model.fit(
+
+live = DvcLiveCallback(path="results", report=None)
+checkpoint = keras.callbacks.ModelCheckpoint(
+   weights_path,
+   save_best_only=True,
+   save_weights_only=True,
+   verbose=True)
+reduce_lr = keras.callbacks.ReduceLROnPlateau(monitor="val_accuracy", 
+                                              patience=3, verbose=True)
+hist = model.fit(
     [encoder_input_data, decoder_input_data],
     decoder_target_data,
     batch_size=batch_size,
     epochs=epochs,
     validation_split=0.2,
-    callbacks=[DvcLiveCallback(path="results", model_file="s2s", report=None)]
+    callbacks=[live, checkpoint, reduce_lr]
 )

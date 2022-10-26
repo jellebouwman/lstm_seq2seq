@@ -16,8 +16,8 @@ stages:
     params:
     - params.py:
     outs:
-    - s2s:
-        checkpoint: true
+    - model/weights.hdf5:
+        persist: true
     metrics:
     - results.json:
         cache: false
