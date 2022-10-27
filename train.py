@@ -107,16 +107,18 @@ except:
     )
 
 
+metric = "val_accuracy"
 live = DvcLiveCallback(path="results", report=None, resume=True)
 checkpoint = keras.callbacks.ModelCheckpoint(
    weights_path,
    save_best_only=True,
    save_weights_only=True,
-   verbose=True)
-reduce_lr = keras.callbacks.ReduceLROnPlateau(monitor="val_accuracy", 
+   verbose=True,
+   monitor=metric)
+reduce_lr = keras.callbacks.ReduceLROnPlateau(monitor=metric, 
                                               patience=3,
                                               verbose=True)
-early_stop = keras.callbacks.EarlyStopping(monitor="val_accuracy",
+early_stop = keras.callbacks.EarlyStopping(monitor=metric,
                                            patience=10,
                                            verbose=True)
 time_stop = tfa.callbacks.TimeStopping(seconds=3600, verbose=1)

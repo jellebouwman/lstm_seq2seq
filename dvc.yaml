@@ -21,6 +21,8 @@ stages:
     metrics:
     - results.json:
         cache: false
+        persist: true
     plots:
     - results:
         cache: false
+        persist: true
