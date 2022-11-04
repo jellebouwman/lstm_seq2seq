@@ -18,6 +18,7 @@ stages:
     outs:
     - model/weights.hdf5:
         persist: true
+        checkpoint: true
     metrics:
     - results.json:
         cache: false
