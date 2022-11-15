@@ -20,10 +20,10 @@ stages:
         persist: true
         checkpoint: true
     metrics:
-    - results.json:
+    - results/metrics.json:
         cache: false
         persist: true
     plots:
-    - results:
+    - results/plots:
         cache: false
         persist: true

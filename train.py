@@ -3,7 +3,7 @@ import numpy as np
 import tensorflow as tf
 import tensorflow_addons as tfa
 from tensorflow import keras
-from dvclive.keras import DvcLiveCallback
+from dvclive.keras import DVCLiveCallback
 
 from params import *
 
@@ -108,7 +108,7 @@ except:
 
 
 metric = "val_accuracy"
-live = DvcLiveCallback(path="results", report=None, resume=True)
+live = DVCLiveCallback(dir="results", report=None, resume=True)
 checkpoint = keras.callbacks.ModelCheckpoint(
    weights_path,
    save_best_only=True,
