@@ -20,25 +20,25 @@ stages:
       md5: c81225a6f6e00dfa0fcdbbf3862528c2
       size: 29787538
     - path: train.py
-      md5: 8a08f139eaf1eb25ca570970906b8ba5
-      size: 5238
+      md5: de215b172f8e2502f6ed99973afe4acf
+      size: 5264
     params:
       params.py:
         batch_size: 64
         data_path: fra.txt
         epochs: 100000
-        latent_dim: 128
+        latent_dim: 256
         lr: 0.01
         num_samples: 100000
         seed: 423
     outs:
     - path: model/weights.hdf5
-      md5: 0eef9483bb093dcfe6f85b2e1475aa52
-      size: 999736
-    - path: results
-      md5: a089cbf46ac7c47713f4cf1b40ae2f29.dir
-      size: 1129
-      nfiles: 4
-    - path: results.json
-      md5: 6e6d2ae81d7df9d01444903eec4f9f41
+      md5: 6f423bd108d3b2f08d4f20488a9edc7a
+      size: 3026232
+    - path: results/metrics.json
+      md5: dc9ed443dac338c71f1d075950df2d98
       size: 211
+    - path: results/plots
+      md5: 589af7d46c9f6a025ac24baaab823713.dir
+      size: 239
+      nfiles: 4

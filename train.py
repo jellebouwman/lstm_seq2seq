@@ -121,7 +121,7 @@ reduce_lr = keras.callbacks.ReduceLROnPlateau(monitor=metric,
 early_stop = keras.callbacks.EarlyStopping(monitor=metric,
                                            patience=10,
                                            verbose=True)
-time_stop = tfa.callbacks.TimeStopping(seconds=3600, verbose=1)
+time_stop = tfa.callbacks.TimeStopping(seconds=300, verbose=1)
 hist = model.fit(
     [encoder_input_data, decoder_input_data],
     decoder_target_data,
