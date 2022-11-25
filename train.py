@@ -1,9 +1,8 @@
 import os
 import numpy as np
-import tensorflow as tf
-import tensorflow_addons as tfa
-from tensorflow import keras
-from dvclive.keras import DVCLiveCallback
+import torch
+import pytorch_lightning as pl
+from dvclive.lightning import DVCLiveLogger
 
 from params import *
 
@@ -71,62 +70,108 @@ for i, (input_text, target_text) in enumerate(zip(input_texts, target_texts)):
     decoder_target_data[i, t:, target_token_index[" "]] = 1.0
 
 
-# Define an input sequence and process it.
-encoder_inputs = keras.Input(shape=(None, num_encoder_tokens))
-encoder = keras.layers.LSTM(latent_dim, return_state=True)
-encoder_outputs, state_h, state_c = encoder(encoder_inputs)
+# Set up the encoder.
+# encoder_inputs = torch.nn.Linear(batch_size, num_encoder_tokens)
+# encoder_lstm = torch.nn.LSTM(num_encoder_tokens, latent_dim)
+# encoder = torch.nn.Sequential(encoder_inputs, encoder_lstm)
+encoder = torch.nn.LSTM(num_encoder_tokens, latent_dim)
 
-# We discard `encoder_outputs` and only keep the states.
-encoder_states = [state_h, state_c]
+# Set up the decoder.
+# decoder_inputs = torch.nn.Linear(batch_size, num_decoder_tokens)
+# decoder_lstm = torch.nn.LSTM(num_decoder_tokens, latent_dim)
+# decoder = torch.nn.Sequential(decoder_inputs, decoder_lstm)
+decoder = torch.nn.LSTM(num_decoder_tokens, latent_dim)
 
-# Set up the decoder, using `encoder_states` as initial state.
-decoder_inputs = keras.Input(shape=(None, num_decoder_tokens))
+# Define the model 
+class LSTMSeqToSeq(pl.LightningModule):
+    def __init__(self, encoder, decoder):
+        super().__init__()
+        self.encoder = encoder
+        self.decoder = decoder
 
-# We set up our decoder to return full output sequences,
-# and to return internal states as well. We don't use the
-# return states in the training model, but we will use them in inference.
-decoder_lstm = keras.layers.LSTM(latent_dim, return_sequences=True, return_state=True)
-decoder_outputs, _, _ = decoder_lstm(decoder_inputs, initial_state=encoder_states)
-decoder_dense = keras.layers.Dense(num_decoder_tokens, activation="softmax")
-decoder_outputs = decoder_dense(decoder_outputs)
+    def training_step(self, batch, batch_idx):
+        # training_step defines the train loop.
+        # it is independent of forward
+        (x_encoder, x_decoder), y = batch
+        # x_encoder = x_encoder.view(x_encoder.size(0), -1)
+        encoder_outputs, (state_h, state_c) = self.encoder(x_encoder)
+        # We discard `encoder_outputs` and only keep the states.
+        import pdb; pdb.set_trace()
+        decoder_outputs, (_, _) = self.decoder(x_decoder, (state_h, state_c))
+        decoder_dense = torch.nn.Linear(len(decoder_outputs), num_decoder_tokens)(decoder_outputs)
+        loss = nn.functional.softmax(decoder_dense)
+        return loss
 
-# Define the model that will turn
-# `encoder_input_data` & `decoder_input_data` into `decoder_target_data`
-weights_path = "model/weights.hdf5"
-os.makedirs("model", exist_ok=True)
-try:
-    model.load_weights(weights_path)
-except:
-    print(f"Unable to load weights from {weights_path}. Compiling new model.")
-    model = keras.Model([encoder_inputs, decoder_inputs], decoder_outputs)
-    optimizer = keras.optimizers.RMSprop(lr=lr)
-    model.compile(
-        optimizer="rmsprop",
-        loss="categorical_crossentropy",
-        metrics=["accuracy"]
-    )
+    def configure_optimizers(self):
+        optimizer = torch.optim.RMSprop(self.parameters(), lr=1e-3)
+        return optimizer
 
 
-metric = "val_accuracy"
-live = DVCLiveCallback(dir="results", report=None, resume=True)
-checkpoint = keras.callbacks.ModelCheckpoint(
-   weights_path,
-   save_best_only=True,
-   save_weights_only=True,
-   verbose=True,
-   monitor=metric)
-reduce_lr = keras.callbacks.ReduceLROnPlateau(monitor=metric, 
-                                              patience=3,
-                                              verbose=True)
-early_stop = keras.callbacks.EarlyStopping(monitor=metric,
-                                           patience=10,
-                                           verbose=True)
-time_stop = tfa.callbacks.TimeStopping(seconds=300, verbose=1)
-hist = model.fit(
-    [encoder_input_data, decoder_input_data],
-    decoder_target_data,
-    batch_size=batch_size,
-    epochs=epochs,
-    validation_split=0.2,
-    callbacks=[live, checkpoint, reduce_lr, early_stop, time_stop]
-)
+# init the autoencoder
+arch = LSTMSeqToSeq(encoder, decoder)
+
+# load the data
+class CustomDataset(torch.utils.data.Dataset):
+    def __init__(self, encoder_input_data, decoder_input_data,
+            decoder_target_data):
+        self.encoder_input_data = encoder_input_data
+        self.decoder_input_data = decoder_input_data
+        self.decoder_target_data = decoder_target_data
+
+    def __len__(self):
+        return len(self.encoder_input_data)
+
+    def __getitem__(self, idx):
+        return (self.encoder_input_data[idx], self.decoder_input_data[idx]), self.decoder_target_data
+
+
+combined_data = CustomDataset(encoder_input_data, decoder_input_data, decoder_target_data)
+train_len = int(len(combined_data)*0.8)
+val_len = len(combined_data) - train_len
+train, val = torch.utils.data.random_split(combined_data, [train_len, val_len],
+        generator=torch.Generator().manual_seed(seed))
+train_loader = torch.utils.data.DataLoader(train, batch_size=batch_size)
+val_loader = torch.utils.data.DataLoader(val, batch_size=batch_size)
+
+trainer = pl.Trainer(max_epochs=epochs)
+trainer.fit(model=arch, train_dataloaders=train_loader,
+        val_dataloaders=val_loader)
+
+# weights_path = "model/weights.hdf5"
+# os.makedirs("model", exist_ok=True)
+# try:
+#     model.load_weights(weights_path)
+# except:
+#     print(f"Unable to load weights from {weights_path}. Compiling new model.")
+#     model = keras.Model([encoder_inputs, decoder_inputs], decoder_outputs)
+#     optimizer = keras.optimizers.RMSprop(lr=lr)
+#     model.compile(
+#         optimizer="rmsprop",
+#         loss="categorical_crossentropy",
+#         metrics=["accuracy"]
+#     )
+
+
+# metric = "val_accuracy"
+# live = DVCLiveCallback(dir="results", report=None, resume=True)
+# checkpoint = keras.callbacks.ModelCheckpoint(
+#    weights_path,
+#    save_best_only=True,
+#    save_weights_only=True,
+#    verbose=True,
+#    monitor=metric)
+# reduce_lr = keras.callbacks.ReduceLROnPlateau(monitor=metric, 
+#                                               patience=3,
+#                                               verbose=True)
+# early_stop = keras.callbacks.EarlyStopping(monitor=metric,
+#                                            patience=10,
+#                                            verbose=True)
+# time_stop = tfa.callbacks.TimeStopping(seconds=300, verbose=1)
+# hist = model.fit(
+#     [encoder_input_data, decoder_input_data],
+#     decoder_target_data,
+#     batch_size=batch_size,
+#     epochs=epochs,
+#     validation_split=0.2,
+#     callbacks=[live, checkpoint, reduce_lr, early_stop, time_stop]
+# )
