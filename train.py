@@ -2,6 +2,7 @@ import os
 import numpy as np
 import torch
 import pytorch_lightning as pl
+import torchmetrics
 from dvclive.lightning import DVCLiveLogger
 
 from params import *
@@ -74,13 +75,16 @@ for i, (input_text, target_text) in enumerate(zip(input_texts, target_texts)):
 # encoder_inputs = torch.nn.Linear(batch_size, num_encoder_tokens)
 # encoder_lstm = torch.nn.LSTM(num_encoder_tokens, latent_dim)
 # encoder = torch.nn.Sequential(encoder_inputs, encoder_lstm)
-encoder = torch.nn.LSTM(num_encoder_tokens, latent_dim)
+encoder = torch.nn.LSTM(num_encoder_tokens, latent_dim, batch_first=True)
 
 # Set up the decoder.
 # decoder_inputs = torch.nn.Linear(batch_size, num_decoder_tokens)
 # decoder_lstm = torch.nn.LSTM(num_decoder_tokens, latent_dim)
 # decoder = torch.nn.Sequential(decoder_inputs, decoder_lstm)
-decoder = torch.nn.LSTM(num_decoder_tokens, latent_dim)
+decoder = torch.nn.LSTM(num_decoder_tokens, latent_dim, batch_first=True)
+decoder_linear = torch.nn.Linear(latent_dim, num_decoder_tokens)
+decoder_softmax = torch.nn.Softmax(dim=2)
+dense = torch.nn.Sequential(decoder_linear, decoder_softmax)
 
 # Define the model 
 class LSTMSeqToSeq(pl.LightningModule):
@@ -88,22 +92,45 @@ class LSTMSeqToSeq(pl.LightningModule):
         super().__init__()
         self.encoder = encoder
         self.decoder = decoder
+        self.dense = dense
+        self.acc = torchmetrics.classification.MulticlassAccuracy(num_decoder_tokens)
 
     def training_step(self, batch, batch_idx):
         # training_step defines the train loop.
         # it is independent of forward
         (x_encoder, x_decoder), y = batch
-        # x_encoder = x_encoder.view(x_encoder.size(0), -1)
         encoder_outputs, (state_h, state_c) = self.encoder(x_encoder)
         # We discard `encoder_outputs` and only keep the states.
-        import pdb; pdb.set_trace()
         decoder_outputs, (_, _) = self.decoder(x_decoder, (state_h, state_c))
-        decoder_dense = torch.nn.Linear(len(decoder_outputs), num_decoder_tokens)(decoder_outputs)
-        loss = nn.functional.softmax(decoder_dense)
+        y_hat = self.dense(decoder_outputs)
+        # Reshape y and y_hat
+        y = y.flatten()
+        y_hat = y_hat.flatten(end_dim=1)
+        # Log metrics
+        loss = torch.nn.functional.cross_entropy(y_hat, y)
+        acc = self.acc(y_hat, y)
+        self.log("step_train_loss", loss, prog_bar=True)
+        self.log("step_train_acc", acc, prog_bar=True)
+        self.log("train_loss", loss, on_step=False, on_epoch=True)
+        self.log("train_acc", acc, on_step=False, on_epoch=True)
         return loss
 
+    def validation_step(self, batch, batch_idx):
+        (x_encoder, x_decoder), y = batch
+        encoder_outputs, (state_h, state_c) = self.encoder(x_encoder)
+        decoder_outputs, (_, _) = self.decoder(x_decoder, (state_h, state_c))
+        y_hat = self.dense(decoder_outputs)
+        y = y.flatten()
+        y_hat = y_hat.flatten(end_dim=1)
+        loss = torch.nn.functional.cross_entropy(y_hat, y)
+        acc = self.acc(y_hat, y)
+        self.log("step_val_loss", loss, prog_bar=True)
+        self.log("step_val_acc", acc, prog_bar=True)
+        self.log("val_loss", loss, on_step=False, on_epoch=True)
+        self.log("val_acc", acc, on_step=False, on_epoch=True)
+
     def configure_optimizers(self):
-        optimizer = torch.optim.RMSprop(self.parameters(), lr=1e-3)
+        optimizer = torch.optim.RMSprop(self.parameters(), lr=lr)
         return optimizer
 
 
@@ -122,7 +149,9 @@ class CustomDataset(torch.utils.data.Dataset):
         return len(self.encoder_input_data)
 
     def __getitem__(self, idx):
-        return (self.encoder_input_data[idx], self.decoder_input_data[idx]), self.decoder_target_data
+        target = self.decoder_target_data[idx].argmax(axis=1)
+        return (self.encoder_input_data[idx], self.decoder_input_data[idx]), \
+               target
 
 
 combined_data = CustomDataset(encoder_input_data, decoder_input_data, decoder_target_data)
@@ -133,7 +162,9 @@ train, val = torch.utils.data.random_split(combined_data, [train_len, val_len],
 train_loader = torch.utils.data.DataLoader(train, batch_size=batch_size)
 val_loader = torch.utils.data.DataLoader(val, batch_size=batch_size)
 
-trainer = pl.Trainer(max_epochs=epochs)
+live = DVCLiveLogger()
+csv = pl.loggers.CSVLogger("logs")
+trainer = pl.Trainer(max_epochs=epochs, logger=[csv])
 trainer.fit(model=arch, train_dataloaders=train_loader,
         val_dataloaders=val_loader)
 
