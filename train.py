@@ -47,68 +47,61 @@ input_token_index = dict([(char, i) for i, char in enumerate(input_characters)])
 target_token_index = dict([(char, i) for i, char in enumerate(target_characters)])
 
 encoder_input_data = np.zeros(
-    (len(input_texts), max_encoder_seq_length, num_encoder_tokens), dtype="float32"
+    (len(input_texts), max_encoder_seq_length), dtype=int
 )
 decoder_input_data = np.zeros(
-    (len(input_texts), max_decoder_seq_length, num_decoder_tokens), dtype="float32"
+    (len(input_texts), max_decoder_seq_length), dtype=int
 )
 decoder_target_data = np.zeros(
-    (len(input_texts), max_decoder_seq_length, num_decoder_tokens), dtype="float32"
+    (len(input_texts), max_decoder_seq_length), dtype=int
 )
 
 for i, (input_text, target_text) in enumerate(zip(input_texts, target_texts)):
     for t, char in enumerate(input_text):
-        encoder_input_data[i, t, input_token_index[char]] = 1.0
-    encoder_input_data[i, t + 1 :, input_token_index[" "]] = 1.0
+        encoder_input_data[i, t] = input_token_index[char]
+    encoder_input_data[i, t + 1 :] = input_token_index[" "]
     for t, char in enumerate(target_text):
         # decoder_target_data is ahead of decoder_input_data by one timestep
-        decoder_input_data[i, t, target_token_index[char]] = 1.0
+        decoder_input_data[i, t] = target_token_index[char]
         if t > 0:
             # decoder_target_data will be ahead by one timestep
             # and will not include the start character.
-            decoder_target_data[i, t - 1, target_token_index[char]] = 1.0
-    decoder_input_data[i, t + 1 :, target_token_index[" "]] = 1.0
-    decoder_target_data[i, t:, target_token_index[" "]] = 1.0
+            decoder_target_data[i, t - 1] = target_token_index[char]
+    decoder_input_data[i, t + 1 :] = target_token_index[" "]
+    decoder_target_data[i, t:] = target_token_index[" "]
 
-
-# Set up the encoder.
-# encoder_inputs = torch.nn.Linear(batch_size, num_encoder_tokens)
-# encoder_lstm = torch.nn.LSTM(num_encoder_tokens, latent_dim)
-# encoder = torch.nn.Sequential(encoder_inputs, encoder_lstm)
-encoder = torch.nn.LSTM(num_encoder_tokens, latent_dim, batch_first=True)
-
-# Set up the decoder.
-# decoder_inputs = torch.nn.Linear(batch_size, num_decoder_tokens)
-# decoder_lstm = torch.nn.LSTM(num_decoder_tokens, latent_dim)
-# decoder = torch.nn.Sequential(decoder_inputs, decoder_lstm)
-decoder = torch.nn.LSTM(num_decoder_tokens, latent_dim, batch_first=True)
-decoder_linear = torch.nn.Linear(latent_dim, num_decoder_tokens)
-decoder_softmax = torch.nn.Softmax(dim=2)
-dense = torch.nn.Sequential(decoder_linear, decoder_softmax)
 
 # Define the model 
 class LSTMSeqToSeq(pl.LightningModule):
-    def __init__(self, encoder, decoder):
+    def __init__(self):
         super().__init__()
-        self.encoder = encoder
-        self.decoder = decoder
-        self.dense = dense
+        self.encoder_embedding = torch.nn.Embedding(num_encoder_tokens, latent_dim)
+        self.encoder = torch.nn.LSTM(latent_dim, latent_dim, batch_first=True)
+        self.decoder_embedding = torch.nn.Embedding(num_decoder_tokens,
+                latent_dim)
+        self.decoder = torch.nn.LSTM(latent_dim, latent_dim, batch_first=True)
+
+        self.out = torch.nn.Linear(latent_dim, num_decoder_tokens)
         self.acc = torchmetrics.classification.MulticlassAccuracy(num_decoder_tokens)
 
-    def training_step(self, batch, batch_idx):
-        # training_step defines the train loop.
-        # it is independent of forward
-        (x_encoder, x_decoder), y = batch
-        encoder_outputs, (state_h, state_c) = self.encoder(x_encoder)
+    def forward(self, x_encoder, x_decoder):
+        encoder_embedded = self.encoder_embedding(x_encoder)
+        encoder_outputs, (state_h, state_c) = self.encoder(encoder_embedded)
+        decoder_embedded = self.decoder_embedding(x_decoder)
         # We discard `encoder_outputs` and only keep the states.
-        decoder_outputs, (_, _) = self.decoder(x_decoder, (state_h, state_c))
-        y_hat = self.dense(decoder_outputs)
-        # Reshape y and y_hat
+        decoder_outputs, (_, _) = self.decoder(decoder_embedded, (state_h, state_c))
+        out = self.out(decoder_outputs)
+        return out
+
+    def training_step(self, batch, batch_idx):
+        (x_encoder, x_decoder), y = batch
+        out = self(x_encoder, x_decoder)
+        # Reshape each step
         y = y.flatten()
-        y_hat = y_hat.flatten(end_dim=1)
+        out = out.flatten(end_dim=1)
         # Log metrics
-        loss = torch.nn.functional.cross_entropy(y_hat, y)
-        acc = self.acc(y_hat, y)
+        loss = torch.nn.functional.cross_entropy(out, y)
+        acc = self.acc(out, y)
         self.log("step_train_loss", loss, prog_bar=True)
         self.log("step_train_acc", acc, prog_bar=True)
         self.log("train_loss", loss, on_step=False, on_epoch=True)
@@ -117,13 +110,13 @@ class LSTMSeqToSeq(pl.LightningModule):
 
     def validation_step(self, batch, batch_idx):
         (x_encoder, x_decoder), y = batch
-        encoder_outputs, (state_h, state_c) = self.encoder(x_encoder)
-        decoder_outputs, (_, _) = self.decoder(x_decoder, (state_h, state_c))
-        y_hat = self.dense(decoder_outputs)
+        out = self(x_encoder, x_decoder)
+        # Reshape each step
         y = y.flatten()
-        y_hat = y_hat.flatten(end_dim=1)
-        loss = torch.nn.functional.cross_entropy(y_hat, y)
-        acc = self.acc(y_hat, y)
+        out = out.flatten(end_dim=1)
+        # Log metrics
+        loss = torch.nn.functional.cross_entropy(out, y)
+        acc = self.acc(out, y)
         self.log("step_val_loss", loss, prog_bar=True)
         self.log("step_val_acc", acc, prog_bar=True)
         self.log("val_loss", loss, on_step=False, on_epoch=True)
@@ -134,8 +127,7 @@ class LSTMSeqToSeq(pl.LightningModule):
         return optimizer
 
 
-# init the autoencoder
-arch = LSTMSeqToSeq(encoder, decoder)
+arch = LSTMSeqToSeq()
 
 # load the data
 class CustomDataset(torch.utils.data.Dataset):
@@ -149,9 +141,8 @@ class CustomDataset(torch.utils.data.Dataset):
         return len(self.encoder_input_data)
 
     def __getitem__(self, idx):
-        target = self.decoder_target_data[idx].argmax(axis=1)
         return (self.encoder_input_data[idx], self.decoder_input_data[idx]), \
-               target
+               self.decoder_target_data[idx]
 
 
 combined_data = CustomDataset(encoder_input_data, decoder_input_data, decoder_target_data)
@@ -167,42 +158,3 @@ csv = pl.loggers.CSVLogger("logs")
 trainer = pl.Trainer(max_epochs=epochs, logger=[csv])
 trainer.fit(model=arch, train_dataloaders=train_loader,
         val_dataloaders=val_loader)
-
-# weights_path = "model/weights.hdf5"
-# os.makedirs("model", exist_ok=True)
-# try:
-#     model.load_weights(weights_path)
-# except:
-#     print(f"Unable to load weights from {weights_path}. Compiling new model.")
-#     model = keras.Model([encoder_inputs, decoder_inputs], decoder_outputs)
-#     optimizer = keras.optimizers.RMSprop(lr=lr)
-#     model.compile(
-#         optimizer="rmsprop",
-#         loss="categorical_crossentropy",
-#         metrics=["accuracy"]
-#     )
-
-
-# metric = "val_accuracy"
-# live = DVCLiveCallback(dir="results", report=None, resume=True)
-# checkpoint = keras.callbacks.ModelCheckpoint(
-#    weights_path,
-#    save_best_only=True,
-#    save_weights_only=True,
-#    verbose=True,
-#    monitor=metric)
-# reduce_lr = keras.callbacks.ReduceLROnPlateau(monitor=metric, 
-#                                               patience=3,
-#                                               verbose=True)
-# early_stop = keras.callbacks.EarlyStopping(monitor=metric,
-#                                            patience=10,
-#                                            verbose=True)
-# time_stop = tfa.callbacks.TimeStopping(seconds=300, verbose=1)
-# hist = model.fit(
-#     [encoder_input_data, decoder_input_data],
-#     decoder_target_data,
-#     batch_size=batch_size,
-#     epochs=epochs,
-#     validation_split=0.2,
-#     callbacks=[live, checkpoint, reduce_lr, early_stop, time_stop]
-# )
