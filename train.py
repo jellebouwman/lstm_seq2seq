@@ -150,10 +150,16 @@ train, val = torch.utils.data.random_split(combined_data, [train_len, val_len],
 train_loader = torch.utils.data.DataLoader(train, batch_size=batch_size)
 val_loader = torch.utils.data.DataLoader(val, batch_size=batch_size)
 
-live = DVCLiveLogger()
-csv = pl.loggers.CSVLogger("logs")
-timer = pl.callbacks.Timer(duration="00:02:00:00")
+live = DVCLiveLogger(dir="results", report=None)
+checkpoint = pl.callbacks.ModelCheckpoint(
+        dirpath="model",
+        filename="model",
+        monitor="val_acc",
+        mode="max",
+        save_weights_only=True, every_n_epochs=1)
+timer = pl.callbacks.Timer(duration="00:01:00:00")
 
-trainer = pl.Trainer(max_epochs=epochs, logger=[csv], callbacks=[timer])
+trainer = pl.Trainer(max_epochs=epochs, logger=[live],
+                     callbacks=[timer, checkpoint])
 trainer.fit(model=arch, train_dataloaders=train_loader,
         val_dataloaders=val_loader)
