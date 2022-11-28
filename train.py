@@ -76,7 +76,7 @@ class LSTMSeqToSeq(pl.LightningModule):
     def __init__(self):
         super().__init__()
         self.encoder_embedding = torch.nn.Embedding(num_encoder_tokens, latent_dim)
-        self.encoder = torch.nn.LSTM(latent_dim, latent_dim)
+        self.encoder = torch.nn.LSTM(latent_dim, latent_dim, batch_first=True)
         self.decoder_embedding = torch.nn.Embedding(num_decoder_tokens,
                 latent_dim)
         self.decoder = torch.nn.LSTM(latent_dim, latent_dim, batch_first=True)
@@ -86,39 +86,23 @@ class LSTMSeqToSeq(pl.LightningModule):
                 num_decoder_tokens, average="micro")
 
     def forward(self, x_encoder, x_decoder):
-        n = len(x_encoder)
-        state_h_batch = torch.zeros((1, n, latent_dim))
-        state_c_batch = torch.zeros((1, n, latent_dim))
-        # Encode up to the last token for each input.
-        for i, i_x_encoder in enumerate(x_encoder):
-            last_input = np.where(i_x_encoder != 0)[0].max()
-            dynamic_input = i_x_encoder[last_input]
-            encoder_embedded = self.encoder_embedding(dynamic_input).view(1, -1)
-            encoder_outputs, (state_h, state_c) = self.encoder(encoder_embedded)
-            state_h_batch[0, i] = state_h
-            state_c_batch[0, i] = state_c
+        encoder_embedded = self.encoder_embedding(x_encoder)
+        encoder_outputs, (state_h, state_c) = self.encoder(encoder_embedded)
         decoder_embedded = self.decoder_embedding(x_decoder)
         # We discard `encoder_outputs` and only keep the states.
-        decoder_outputs, (_, _) = self.decoder(decoder_embedded, (state_h_batch, state_c_batch))
+        decoder_outputs, (_, _) = self.decoder(decoder_embedded, (state_h, state_c))
         out = self.out(decoder_outputs)
         return out
 
     def training_step(self, batch, batch_idx):
         (x_encoder, x_decoder), y = batch
         out = self(x_encoder, x_decoder)
-        # Keep only up to the last token for each input.
-        y_batch = []
-        out_batch = []
-        for i, i_y in enumerate(y):
-            last_input = np.where(i_y != 0)[0].max()
-            y_batch.append(i_y[:last_input + 1])
-            out_batch.append(out[i, :last_input + 1])
         # Reshape each step
-        y_cat = torch.cat(y_batch)
-        out_cat = torch.cat(out_batch)
+        y = y.flatten()
+        out = out.flatten(end_dim=1)
         # Log metrics
-        loss = torch.nn.functional.cross_entropy(out_cat, y_cat)
-        acc = self.acc(out_cat, y_cat)
+        loss = torch.nn.functional.cross_entropy(out, y)
+        acc = self.acc(out, y)
         self.log("train_loss", loss, on_step=True, on_epoch=True)
         self.log("train_acc", acc, on_step=True, on_epoch=True)
         return loss
@@ -126,19 +110,12 @@ class LSTMSeqToSeq(pl.LightningModule):
     def validation_step(self, batch, batch_idx):
         (x_encoder, x_decoder), y = batch
         out = self(x_encoder, x_decoder)
-        # Keep only up to the last token for each input.
-        y_batch = []
-        out_batch = []
-        for i, i_y in enumerate(y):
-            last_input = np.where(i_y != 0)[0].max()
-            y_batch.append(i_y[:last_input + 1])
-            out_batch.append(out[i, :last_input + 1])
         # Reshape each step
-        y_cat = torch.cat(y_batch)
-        out_cat = torch.cat(out_batch)
+        y = y.flatten()
+        out = out.flatten(end_dim=1)
         # Log metrics
-        loss = torch.nn.functional.cross_entropy(out_cat, y_cat)
-        acc = self.acc(out_cat, y_cat)
+        loss = torch.nn.functional.cross_entropy(out, y)
+        acc = self.acc(out, y)
         self.log("val_loss", loss, on_step=True, on_epoch=True)
         self.log("val_acc", acc, on_step=True, on_epoch=True)
 
