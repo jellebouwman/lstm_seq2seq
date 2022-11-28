@@ -18,20 +18,20 @@ np.random.seed(seed)
 np.random.shuffle(lines)
 for line in lines[: min(num_samples, len(lines) - 1)]:
     input_text, target_text, _ = line.split("\t")
-    # We use "tab" as the "start sequence" character
-    # for the targets, and "\n" as "end sequence" character.
-    target_text = "\t" + target_text + "\n"
-    input_texts.append(input_text)
-    target_texts.append(target_text)
     for char in input_text:
         if char not in input_characters:
             input_characters.add(char)
     for char in target_text:
         if char not in target_characters:
             target_characters.add(char)
+    # We use "tab" as the "start sequence" character
+    # for the targets, and "\n" as "end sequence" character.
+    target_text = "\t" + target_text + "\n"
+    input_texts.append(input_text)
+    target_texts.append(target_text)
 
 input_characters = sorted(list(input_characters))
-target_characters = sorted(list(target_characters))
+target_characters = sorted(list(target_characters)) + ["\t", "\n"]
 num_encoder_tokens = len(input_characters)
 num_decoder_tokens = len(target_characters)
 max_encoder_seq_length = max([len(txt) for txt in input_texts])
@@ -76,51 +76,71 @@ class LSTMSeqToSeq(pl.LightningModule):
     def __init__(self):
         super().__init__()
         self.encoder_embedding = torch.nn.Embedding(num_encoder_tokens, latent_dim)
-        self.encoder = torch.nn.LSTM(latent_dim, latent_dim, batch_first=True)
+        self.encoder = torch.nn.LSTM(latent_dim, latent_dim)
         self.decoder_embedding = torch.nn.Embedding(num_decoder_tokens,
                 latent_dim)
         self.decoder = torch.nn.LSTM(latent_dim, latent_dim, batch_first=True)
 
         self.out = torch.nn.Linear(latent_dim, num_decoder_tokens)
-        self.acc = torchmetrics.classification.MulticlassAccuracy(num_decoder_tokens)
+        self.acc = torchmetrics.classification.MulticlassAccuracy(
+                num_decoder_tokens, average="micro")
 
     def forward(self, x_encoder, x_decoder):
-        encoder_embedded = self.encoder_embedding(x_encoder)
-        encoder_outputs, (state_h, state_c) = self.encoder(encoder_embedded)
+        n = len(x_encoder)
+        state_h_batch = torch.zeros((1, n, latent_dim))
+        state_c_batch = torch.zeros((1, n, latent_dim))
+        # Encode up to the last token for each input.
+        for i, i_x_encoder in enumerate(x_encoder):
+            last_input = np.where(i_x_encoder != 0)[0].max()
+            dynamic_input = i_x_encoder[last_input]
+            encoder_embedded = self.encoder_embedding(dynamic_input).view(1, -1)
+            encoder_outputs, (state_h, state_c) = self.encoder(encoder_embedded)
+            state_h_batch[0, i] = state_h
+            state_c_batch[0, i] = state_c
         decoder_embedded = self.decoder_embedding(x_decoder)
         # We discard `encoder_outputs` and only keep the states.
-        decoder_outputs, (_, _) = self.decoder(decoder_embedded, (state_h, state_c))
+        decoder_outputs, (_, _) = self.decoder(decoder_embedded, (state_h_batch, state_c_batch))
         out = self.out(decoder_outputs)
         return out
 
     def training_step(self, batch, batch_idx):
         (x_encoder, x_decoder), y = batch
         out = self(x_encoder, x_decoder)
+        # Keep only up to the last token for each input.
+        y_batch = []
+        out_batch = []
+        for i, i_y in enumerate(y):
+            last_input = np.where(i_y != 0)[0].max()
+            y_batch.append(i_y[:last_input + 1])
+            out_batch.append(out[i, :last_input + 1])
         # Reshape each step
-        y = y.flatten()
-        out = out.flatten(end_dim=1)
+        y_cat = torch.cat(y_batch)
+        out_cat = torch.cat(out_batch)
         # Log metrics
-        loss = torch.nn.functional.cross_entropy(out, y)
-        acc = self.acc(out, y)
-        self.log("step_train_loss", loss, prog_bar=True)
-        self.log("step_train_acc", acc, prog_bar=True)
-        self.log("train_loss", loss, on_step=False, on_epoch=True)
-        self.log("train_acc", acc, on_step=False, on_epoch=True)
+        loss = torch.nn.functional.cross_entropy(out_cat, y_cat)
+        acc = self.acc(out_cat, y_cat)
+        self.log("train_loss", loss, on_step=True, on_epoch=True)
+        self.log("train_acc", acc, on_step=True, on_epoch=True)
         return loss
 
     def validation_step(self, batch, batch_idx):
         (x_encoder, x_decoder), y = batch
         out = self(x_encoder, x_decoder)
+        # Keep only up to the last token for each input.
+        y_batch = []
+        out_batch = []
+        for i, i_y in enumerate(y):
+            last_input = np.where(i_y != 0)[0].max()
+            y_batch.append(i_y[:last_input + 1])
+            out_batch.append(out[i, :last_input + 1])
         # Reshape each step
-        y = y.flatten()
-        out = out.flatten(end_dim=1)
+        y_cat = torch.cat(y_batch)
+        out_cat = torch.cat(out_batch)
         # Log metrics
-        loss = torch.nn.functional.cross_entropy(out, y)
-        acc = self.acc(out, y)
-        self.log("step_val_loss", loss, prog_bar=True)
-        self.log("step_val_acc", acc, prog_bar=True)
-        self.log("val_loss", loss, on_step=False, on_epoch=True)
-        self.log("val_acc", acc, on_step=False, on_epoch=True)
+        loss = torch.nn.functional.cross_entropy(out_cat, y_cat)
+        acc = self.acc(out_cat, y_cat)
+        self.log("val_loss", loss, on_step=True, on_epoch=True)
+        self.log("val_acc", acc, on_step=True, on_epoch=True)
 
     def configure_optimizers(self):
         optimizer = torch.optim.RMSprop(self.parameters(), lr=lr)
@@ -155,6 +175,8 @@ val_loader = torch.utils.data.DataLoader(val, batch_size=batch_size)
 
 live = DVCLiveLogger()
 csv = pl.loggers.CSVLogger("logs")
-trainer = pl.Trainer(max_epochs=epochs, logger=[csv])
+timer = pl.callbacks.Timer(duration="00:02:00:00")
+
+trainer = pl.Trainer(max_epochs=epochs, logger=[csv], callbacks=[timer])
 trainer.fit(model=arch, train_dataloaders=train_loader,
         val_dataloaders=val_loader)
