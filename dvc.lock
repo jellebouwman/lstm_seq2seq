@@ -20,8 +20,8 @@ stages:
       md5: c81225a6f6e00dfa0fcdbbf3862528c2
       size: 29787538
     - path: train.py
-      md5: de215b172f8e2502f6ed99973afe4acf
-      size: 5264
+      md5: 250160319fa134c67976ec522cfc921f
+      size: 6452
     params:
       params.py:
         batch_size: 64
@@ -32,13 +32,11 @@ stages:
         num_samples: 100000
         seed: 423
     outs:
-    - path: model/weights.hdf5
-      md5: 6f423bd108d3b2f08d4f20488a9edc7a
-      size: 3026232
+    - path: model/model.ckpt
     - path: results/metrics.json
-      md5: dc9ed443dac338c71f1d075950df2d98
-      size: 211
+      md5: b4f608b036368f6967ccb595f99f07d0
+      size: 291
     - path: results/plots
-      md5: 589af7d46c9f6a025ac24baaab823713.dir
-      size: 239
-      nfiles: 4
+      md5: f8a647f18b1b7596962dba7c9aac8ad4.dir
+      size: 9914
+      nfiles: 5
