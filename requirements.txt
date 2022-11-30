@@ -1,3 +1,4 @@
 dvc[s3]
-numpy
-tensorflow
+pytorch-lightning
+torch
+torchmetrics
