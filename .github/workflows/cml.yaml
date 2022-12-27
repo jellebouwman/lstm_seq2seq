@@ -43,7 +43,7 @@ jobs:
           pip install --upgrade -r requirements.txt
 
           dvc pull 
-          dvc exp run
+          dvc repro
           dvc push
  
           git add .
