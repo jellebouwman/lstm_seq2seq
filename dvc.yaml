@@ -16,8 +16,7 @@ stages:
     params:
     - params.py:
     outs:
-    - s2s:
-        checkpoint: true
+    - s2s
     metrics:
     - results/metrics.json:
         cache: false
