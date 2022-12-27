@@ -36,6 +36,7 @@ jobs:
           REPO_TOKEN: ${{ secrets.GITHUB_TOKEN }}
           DVC_EXP_AUTO_PUSH: 1
           DVC_EXP_GIT_REMOTE: origin
+          STUDIO_TOKEN: ${{ secrets.STUDIO_TOKEN }}
         run: |
           cml ci --unshallow
           pip install -r requirements.txt

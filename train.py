@@ -1,7 +1,7 @@
 import numpy as np
 import tensorflow as tf
 from tensorflow import keras
-from dvclive.keras import DvcLiveCallback
+from dvclive.keras import DVCLiveCallback
 
 from params import *
 
@@ -99,5 +99,5 @@ model.fit(
     batch_size=batch_size,
     epochs=epochs,
     validation_split=0.2,
-    callbacks=[DvcLiveCallback(path="results", model_file="s2s", report=None)]
+    callbacks=[DVCLiveCallback(dir="results", model_file="s2s", report=None)]
 )

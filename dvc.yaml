@@ -19,8 +19,8 @@ stages:
     - s2s:
         checkpoint: true
     metrics:
-    - results.json:
+    - results/metrics.json:
         cache: false
     plots:
-    - results:
+    - results/plots:
         cache: false
