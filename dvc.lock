@@ -26,18 +26,18 @@ stages:
       params.py:
         batch_size: 64
         data_path: fra.txt
-        epochs: 1
+        epochs: 10
         latent_dim: 256
         num_samples: 10000
     outs:
     - path: results/metrics.json
-      md5: 749e4c451d45e55d3d0d5b89442060b1
-      size: 209
+      md5: 70f7a73e65b44fd9887123610d3b3070
+      size: 208
     - path: results/plots
-      md5: 9de19f9c2e30b01dfe3c6ef7252a3f39.dir
-      size: 153
+      md5: d5a221b904a387fab88e039e18bab598.dir
+      size: 906
       nfiles: 4
     - path: s2s
-      md5: 04d4c468e900524e28ba065042366890.dir
-      size: 7228226
+      md5: ef04fd0f6c707ad8cc11a0bf0a802808.dir
+      size: 7228970
       nfiles: 5
