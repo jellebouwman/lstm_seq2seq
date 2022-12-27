@@ -39,7 +39,7 @@ jobs:
           STUDIO_TOKEN: ${{ secrets.STUDIO_TOKEN }}
         run: |
           cml ci --unshallow
-          pip install -r requirements.txt
+          pip install --upgrade -r requirements.txt
 
           dvc pull 
           dvc exp run
