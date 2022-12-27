@@ -36,6 +36,7 @@ jobs:
           REPO_TOKEN: ${{ secrets.GITHUB_TOKEN }}
           DVC_EXP_AUTO_PUSH: 1
           DVC_EXP_GIT_REMOTE: origin
+          DVCLIVE_LOG_LEVEL: DEBUG
           STUDIO_TOKEN: ${{ secrets.STUDIO_TOKEN }}
         run: |
           cml ci --unshallow
