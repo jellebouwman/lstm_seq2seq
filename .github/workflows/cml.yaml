@@ -38,6 +38,7 @@ jobs:
           DVC_EXP_GIT_REMOTE: origin
           DVCLIVE_LOG_LEVEL: DEBUG
           STUDIO_TOKEN: ${{ secrets.STUDIO_TOKEN }}
+          STUDIO_REPO_URL: github:iterative/lstm_seq2seq
         run: |
           cml ci --unshallow
           pip install --upgrade -r requirements.txt
