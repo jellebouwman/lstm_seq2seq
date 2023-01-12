@@ -157,7 +157,7 @@ checkpoint = pl.callbacks.ModelCheckpoint(
         monitor="val_acc",
         mode="max",
         save_weights_only=True, every_n_epochs=1)
-timer = pl.callbacks.Timer(duration="00:01:00:00")
+timer = pl.callbacks.Timer(duration=duration)
 
 trainer = pl.Trainer(max_epochs=-1, logger=[live],
                      callbacks=[timer, checkpoint])
