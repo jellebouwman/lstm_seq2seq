@@ -43,7 +43,7 @@ jobs:
           cml ci --unshallow
           pip install --upgrade -r requirements.txt
 
-          dvc pull 
+          dvc pull || true
           dvc exp run
           dvc push
  
