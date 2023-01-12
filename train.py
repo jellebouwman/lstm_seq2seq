@@ -126,7 +126,7 @@ hist = model.fit(
     [encoder_input_data, decoder_input_data],
     decoder_target_data,
     batch_size=batch_size,
-    epochs=epochs,
+    epochs=100000,
     validation_split=0.2,
     callbacks=[live, checkpoint, reduce_lr, early_stop, time_stop]
 )
