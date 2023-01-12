@@ -16,11 +16,13 @@ stages:
     params:
     - params.py:
     outs:
-    - s2s:
-        checkpoint: true
+    - model/weights.hdf5:
+        persist: true
     metrics:
     - results/metrics.json:
         cache: false
+        persist: true
     plots:
     - results/plots:
         cache: false
+        persist: true
