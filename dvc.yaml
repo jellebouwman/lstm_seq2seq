@@ -1,3 +1,20 @@
+plots:
+  - Epoch Accuracy:
+      x: step
+      y:
+        results/plots/metrics/train/epoch/acc.tsv: train/epoch/acc
+        results/plots/metrics/val/epoch/acc.tsv: val/epoch/acc
+      y_label: accuracy
+  - results/plots/metrics/train/step/acc.tsv:
+      template: smooth
+      x: step
+      y: train/step/acc
+      title: Batch train accuracy per 50 steps
+  - results/plots/metrics/val/step/acc.tsv:
+      template: smooth
+      x: step
+      y: val/step/acc
+      title: Val step accuracy
 stages:
   download:
     cmd:
@@ -19,11 +36,10 @@ stages:
     - model/model.ckpt:
         persist: true
         checkpoint: true
-    metrics:
-    - results/metrics.json:
+    - results/plots:
         cache: false
         persist: true
-    plots:
-    - results/plots:
+    metrics:
+    - results/metrics.json:
         cache: false
         persist: true
