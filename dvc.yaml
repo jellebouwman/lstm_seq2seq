@@ -5,6 +5,7 @@ plots:
         results/plots/metrics/train/epoch/acc.tsv: train/epoch/acc
         results/plots/metrics/val/epoch/acc.tsv: val/epoch/acc
       y_label: accuracy
+      template: smooth
   - results/plots/metrics/train/step/acc.tsv:
       template: smooth
       x: step
