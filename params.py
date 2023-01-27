@@ -1,4 +1,4 @@
-batch_size = 24  # Batch size for training.
+batch_size = 60  # Batch size for training.
 latent_dim = 64  # Latent dimensionality of the encoding space.
 num_samples = 100000 # Number of samples to train on.
 lr = 0.01 # Learning rate for optimizer.
