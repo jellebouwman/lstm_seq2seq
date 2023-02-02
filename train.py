@@ -3,6 +3,7 @@ import numpy as np
 import torch
 import pytorch_lightning as pl
 import torchmetrics
+from dvclive import Live
 from dvclive.lightning import DVCLiveLogger
 
 from params import *
@@ -150,7 +151,7 @@ train, val = torch.utils.data.random_split(combined_data, [train_len, val_len],
 train_loader = torch.utils.data.DataLoader(train, batch_size=batch_size)
 val_loader = torch.utils.data.DataLoader(val, batch_size=batch_size)
 
-live = DVCLiveLogger(dir="results", report=None, dvcyaml=False)
+live = DVCLiveLogger(dir="results", report=None, experiment=Live(dvcyaml=False))
 checkpoint = pl.callbacks.ModelCheckpoint(
         dirpath="model",
         filename="model",
