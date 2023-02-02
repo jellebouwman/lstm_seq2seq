@@ -20,25 +20,25 @@ stages:
       md5: c81225a6f6e00dfa0fcdbbf3862528c2
       size: 29787538
     - path: train.py
-      md5: 23975403333c4535a7f89a9bd8522daa
+      md5: 9ac63c9c375d3ea91226d73ba39dc529
       size: 6443
     params:
       params.py:
-        batch_size: 512
+        batch_size: 256
         data_path: fra.txt
         duration: 00:00:30:00
-        latent_dim: 64
+        latent_dim: 32
         lr: 0.01
-        num_samples: 100000
+        num_samples: 10000
         seed: 423
     outs:
     - path: model/model.ckpt
       md5: 012d6281aca487f3ff81d148c43a078d
       size: 349185
     - path: results/metrics.json
-      md5: eec88df28814e98a9387915506c0bbba
-      size: 509
+      md5: a2debf3d1ecb78c948379c77d259335f
+      size: 505
     - path: results/plots
-      md5: 0fc7f637b29db0d684e635f8757983cb.dir
-      size: 19047
+      md5: 0a8e1ba95cdd1fde00d2599d2e129869.dir
+      size: 1901
       nfiles: 9

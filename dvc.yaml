@@ -2,18 +2,18 @@ plots:
   - Epoch Accuracy:
       x: step
       y:
-        results/plots/metrics/train/epoch/acc.tsv: train/epoch/acc
-        results/plots/metrics/val/epoch/acc.tsv: val/epoch/acc
+        results/plots/metrics/train/epoch/acc.tsv: acc
+        results/plots/metrics/val/epoch/acc.tsv: acc
       y_label: accuracy
   - results/plots/metrics/train/step/acc.tsv:
       template: smooth
       x: step
-      y: train/step/acc
+      y: acc
       title: Batch train accuracy per 50 steps
   - results/plots/metrics/val/step/acc.tsv:
       template: smooth
       x: step
-      y: val/step/acc
+      y: acc
       title: Val step accuracy
 stages:
   download:
