@@ -24,7 +24,7 @@ stages:
       size: 6528
     params:
       params.py:
-        batch_size: 256
+        batch_size: 48
         data_path: fra.txt
         duration: 00:00:30:00
         latent_dim: 64
@@ -33,8 +33,8 @@ stages:
         seed: 423
     outs:
     - path: model/model.ckpt
-      md5: 58f4ab06085f9ca9378fe6751230af13
-      size: 108289
+      md5: 82aaa38cfea057f63e34c573943ce3ad
+      size: 342017
     - path: results/metrics.json
       md5: a2debf3d1ecb78c948379c77d259335f
       size: 505
