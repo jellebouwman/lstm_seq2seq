@@ -1,0 +1,3718 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <meta http-equiv="refresh" content="5">
+    <title>DVC Plot</title>
+    
+
+    <script src="https://cdn.jsdelivr.net/npm/vega@5.20.2"></script>
+    <script src="https://cdn.jsdelivr.net/npm/vega-lite@5.2.0"></script>
+    <script src="https://cdn.jsdelivr.net/npm/vega-embed@6.18.2"></script>
+    
+    <style>
+        table {
+            border-spacing: 15px;
+        }
+    </style>
+</head>
+<body>
+    
+        <div id="metrics_json" style="text-align: center; padding: 10x">
+            <p>metrics_json</p>
+            <div style="display: flex;justify-content: center;">
+                <table>
+<thead>
+<tr><th>train                                                                                                                              </th><th style="text-align: right;">  epoch</th><th style="text-align: right;">  step</th><th>val                                                                                                                                  </th></tr>
+</thead>
+<tbody>
+<tr><td>{&#x27;step&#x27;: {&#x27;loss&#x27;: 0.15164519846439362, &#x27;acc&#x27;: 0.953492283821106}, &#x27;epoch&#x27;: {&#x27;loss&#x27;: 0.15164519846439362, &#x27;acc&#x27;: 0.953492283821106}}</td><td style="text-align: right;">      5</td><td style="text-align: right;">   785</td><td>{&#x27;step&#x27;: {&#x27;loss&#x27;: 0.15791095793247223, &#x27;acc&#x27;: 0.9525462985038757}, &#x27;epoch&#x27;: {&#x27;loss&#x27;: 0.14786356687545776, &#x27;acc&#x27;: 0.9549577832221985}}</td></tr>
+</tbody>
+</table>
+            </div>
+        </div>
+
+    <div id = "static_epoch">
+        <script type = "text/javascript">
+            var spec = {
+    "$schema": "https://vega.github.io/schema/vega-lite/v5.json",
+    "data": {
+        "values": [
+    {
+        "epoch": "0",
+        "rev": "workspace",
+        "step": "49"
+    },
+    {
+        "epoch": "0",
+        "rev": "workspace",
+        "step": "99"
+    },
+    {
+        "epoch": "0",
+        "rev": "workspace",
+        "step": "149"
+    },
+    {
+        "epoch": "0",
+        "rev": "workspace",
+        "step": "156"
+    },
+    {
+        "epoch": "0",
+        "rev": "workspace",
+        "step": "156"
+    },
+    {
+        "epoch": "1",
+        "rev": "workspace",
+        "step": "199"
+    },
+    {
+        "epoch": "1",
+        "rev": "workspace",
+        "step": "249"
+    },
+    {
+        "epoch": "1",
+        "rev": "workspace",
+        "step": "299"
+    },
+    {
+        "epoch": "1",
+        "rev": "workspace",
+        "step": "313"
+    },
+    {
+        "epoch": "1",
+        "rev": "workspace",
+        "step": "313"
+    },
+    {
+        "epoch": "2",
+        "rev": "workspace",
+        "step": "349"
+    },
+    {
+        "epoch": "2",
+        "rev": "workspace",
+        "step": "399"
+    },
+    {
+        "epoch": "2",
+        "rev": "workspace",
+        "step": "449"
+    },
+    {
+        "epoch": "2",
+        "rev": "workspace",
+        "step": "470"
+    },
+    {
+        "epoch": "2",
+        "rev": "workspace",
+        "step": "470"
+    },
+    {
+        "epoch": "3",
+        "rev": "workspace",
+        "step": "499"
+    },
+    {
+        "epoch": "3",
+        "rev": "workspace",
+        "step": "549"
+    },
+    {
+        "epoch": "3",
+        "rev": "workspace",
+        "step": "599"
+    },
+    {
+        "epoch": "3",
+        "rev": "workspace",
+        "step": "627"
+    },
+    {
+        "epoch": "3",
+        "rev": "workspace",
+        "step": "627"
+    },
+    {
+        "epoch": "4",
+        "rev": "workspace",
+        "step": "649"
+    },
+    {
+        "epoch": "4",
+        "rev": "workspace",
+        "step": "699"
+    },
+    {
+        "epoch": "4",
+        "rev": "workspace",
+        "step": "749"
+    },
+    {
+        "epoch": "4",
+        "rev": "workspace",
+        "step": "784"
+    },
+    {
+        "epoch": "4",
+        "rev": "workspace",
+        "step": "784"
+    },
+    {
+        "epoch": "5",
+        "rev": "workspace",
+        "step": "785"
+    },
+    {
+        "epoch": "5",
+        "rev": "workspace",
+        "step": "785"
+    },
+    {
+        "epoch": "5",
+        "rev": "workspace",
+        "step": "785"
+    }
+]
+    },
+    "title": "epoch",
+    "width": 300,
+    "height": 300,
+    "params": [
+        {
+            "name": "smooth",
+            "value": 0.001,
+            "bind": {
+                "input": "range",
+                "min": 0.001,
+                "max": 1,
+                "step": 0.001
+            }
+        }
+    ],
+    "layer": [
+        {
+            "mark": "line",
+            "encoding": {
+                "x": {
+                    "field": "step",
+                    "type": "quantitative",
+                    "title": "step"
+                },
+                "y": {
+                    "field": "epoch",
+                    "type": "quantitative",
+                    "title": "epoch",
+                    "scale": {
+                        "zero": false
+                    }
+                },
+                "color": {
+                    "field": "rev",
+                    "type": "nominal"
+                }
+            },
+            "transform": [
+                {
+                    "loess": "epoch",
+                    "on": "step",
+                    "groupby": [
+                        "rev",
+                        "filename",
+                        "field",
+                        "filename::field"
+                    ],
+                    "bandwidth": {
+                        "signal": "smooth"
+                    }
+                }
+            ]
+        },
+        {
+            "mark": {
+                "type": "point",
+                "tooltip": {
+                    "content": "data"
+                }
+            },
+            "encoding": {
+                "x": {
+                    "field": "step",
+                    "type": "quantitative",
+                    "title": "step"
+                },
+                "y": {
+                    "field": "epoch",
+                    "type": "quantitative",
+                    "title": "epoch",
+                    "scale": {
+                        "zero": false
+                    }
+                },
+                "color": {
+                    "field": "rev",
+                    "type": "nominal"
+                }
+            }
+        }
+    ]
+}
+;
+            vegaEmbed('#static_epoch', spec);
+        </script>
+    </div>
+    
+
+    <div id = "static_train_epoch_loss">
+        <script type = "text/javascript">
+            var spec = {
+    "$schema": "https://vega.github.io/schema/vega-lite/v5.json",
+    "data": {
+        "values": [
+    {
+        "loss": "0.2677568197250366",
+        "rev": "workspace",
+        "step": "156"
+    },
+    {
+        "loss": "0.17943960428237915",
+        "rev": "workspace",
+        "step": "313"
+    },
+    {
+        "loss": "0.1644577831029892",
+        "rev": "workspace",
+        "step": "470"
+    },
+    {
+        "loss": "0.15474410355091095",
+        "rev": "workspace",
+        "step": "627"
+    },
+    {
+        "loss": "0.14791077375411987",
+        "rev": "workspace",
+        "step": "784"
+    },
+    {
+        "loss": "0.15164519846439362",
+        "rev": "workspace",
+        "step": "785"
+    }
+]
+    },
+    "title": "train/epoch/loss",
+    "width": 300,
+    "height": 300,
+    "params": [
+        {
+            "name": "smooth",
+            "value": 0.001,
+            "bind": {
+                "input": "range",
+                "min": 0.001,
+                "max": 1,
+                "step": 0.001
+            }
+        }
+    ],
+    "layer": [
+        {
+            "mark": "line",
+            "encoding": {
+                "x": {
+                    "field": "step",
+                    "type": "quantitative",
+                    "title": "step"
+                },
+                "y": {
+                    "field": "loss",
+                    "type": "quantitative",
+                    "title": "loss",
+                    "scale": {
+                        "zero": false
+                    }
+                },
+                "color": {
+                    "field": "rev",
+                    "type": "nominal"
+                }
+            },
+            "transform": [
+                {
+                    "loess": "loss",
+                    "on": "step",
+                    "groupby": [
+                        "rev",
+                        "filename",
+                        "field",
+                        "filename::field"
+                    ],
+                    "bandwidth": {
+                        "signal": "smooth"
+                    }
+                }
+            ]
+        },
+        {
+            "mark": {
+                "type": "point",
+                "tooltip": {
+                    "content": "data"
+                }
+            },
+            "encoding": {
+                "x": {
+                    "field": "step",
+                    "type": "quantitative",
+                    "title": "step"
+                },
+                "y": {
+                    "field": "loss",
+                    "type": "quantitative",
+                    "title": "loss",
+                    "scale": {
+                        "zero": false
+                    }
+                },
+                "color": {
+                    "field": "rev",
+                    "type": "nominal"
+                }
+            }
+        }
+    ]
+}
+;
+            vegaEmbed('#static_train_epoch_loss', spec);
+        </script>
+    </div>
+    
+
+    <div id = "static_train_epoch_acc">
+        <script type = "text/javascript">
+            var spec = {
+    "$schema": "https://vega.github.io/schema/vega-lite/v5.json",
+    "data": {
+        "values": [
+    {
+        "acc": "0.9290064573287964",
+        "rev": "workspace",
+        "step": "156"
+    },
+    {
+        "acc": "0.9464649558067322",
+        "rev": "workspace",
+        "step": "313"
+    },
+    {
+        "acc": "0.9502416849136353",
+        "rev": "workspace",
+        "step": "470"
+    },
+    {
+        "acc": "0.9527802467346191",
+        "rev": "workspace",
+        "step": "627"
+    },
+    {
+        "acc": "0.9548811316490173",
+        "rev": "workspace",
+        "step": "784"
+    },
+    {
+        "acc": "0.953492283821106",
+        "rev": "workspace",
+        "step": "785"
+    }
+]
+    },
+    "title": "train/epoch/acc",
+    "width": 300,
+    "height": 300,
+    "params": [
+        {
+            "name": "smooth",
+            "value": 0.001,
+            "bind": {
+                "input": "range",
+                "min": 0.001,
+                "max": 1,
+                "step": 0.001
+            }
+        }
+    ],
+    "layer": [
+        {
+            "mark": "line",
+            "encoding": {
+                "x": {
+                    "field": "step",
+                    "type": "quantitative",
+                    "title": "step"
+                },
+                "y": {
+                    "field": "acc",
+                    "type": "quantitative",
+                    "title": "acc",
+                    "scale": {
+                        "zero": false
+                    }
+                },
+                "color": {
+                    "field": "rev",
+                    "type": "nominal"
+                }
+            },
+            "transform": [
+                {
+                    "loess": "acc",
+                    "on": "step",
+                    "groupby": [
+                        "rev",
+                        "filename",
+                        "field",
+                        "filename::field"
+                    ],
+                    "bandwidth": {
+                        "signal": "smooth"
+                    }
+                }
+            ]
+        },
+        {
+            "mark": {
+                "type": "point",
+                "tooltip": {
+                    "content": "data"
+                }
+            },
+            "encoding": {
+                "x": {
+                    "field": "step",
+                    "type": "quantitative",
+                    "title": "step"
+                },
+                "y": {
+                    "field": "acc",
+                    "type": "quantitative",
+                    "title": "acc",
+                    "scale": {
+                        "zero": false
+                    }
+                },
+                "color": {
+                    "field": "rev",
+                    "type": "nominal"
+                }
+            }
+        }
+    ]
+}
+;
+            vegaEmbed('#static_train_epoch_acc', spec);
+        </script>
+    </div>
+    
+
+    <div id = "static_train_step_loss">
+        <script type = "text/javascript">
+            var spec = {
+    "$schema": "https://vega.github.io/schema/vega-lite/v5.json",
+    "data": {
+        "values": [
+    {
+        "loss": "0.22707116603851318",
+        "rev": "workspace",
+        "step": "49"
+    },
+    {
+        "loss": "0.2011348307132721",
+        "rev": "workspace",
+        "step": "99"
+    },
+    {
+        "loss": "0.187236949801445",
+        "rev": "workspace",
+        "step": "149"
+    },
+    {
+        "loss": "0.1971157342195511",
+        "rev": "workspace",
+        "step": "199"
+    },
+    {
+        "loss": "0.17703352868556976",
+        "rev": "workspace",
+        "step": "249"
+    },
+    {
+        "loss": "0.17216964066028595",
+        "rev": "workspace",
+        "step": "299"
+    },
+    {
+        "loss": "0.16450494527816772",
+        "rev": "workspace",
+        "step": "349"
+    },
+    {
+        "loss": "0.16256022453308105",
+        "rev": "workspace",
+        "step": "399"
+    },
+    {
+        "loss": "0.15796254575252533",
+        "rev": "workspace",
+        "step": "449"
+    },
+    {
+        "loss": "0.15918348729610443",
+        "rev": "workspace",
+        "step": "499"
+    },
+    {
+        "loss": "0.1567513644695282",
+        "rev": "workspace",
+        "step": "549"
+    },
+    {
+        "loss": "0.1492924988269806",
+        "rev": "workspace",
+        "step": "599"
+    },
+    {
+        "loss": "0.1444990634918213",
+        "rev": "workspace",
+        "step": "649"
+    },
+    {
+        "loss": "0.14713747799396515",
+        "rev": "workspace",
+        "step": "699"
+    },
+    {
+        "loss": "0.14923937618732452",
+        "rev": "workspace",
+        "step": "749"
+    },
+    {
+        "loss": "0.15164519846439362",
+        "rev": "workspace",
+        "step": "785"
+    }
+]
+    },
+    "title": "train/step/loss",
+    "width": 300,
+    "height": 300,
+    "params": [
+        {
+            "name": "smooth",
+            "value": 0.001,
+            "bind": {
+                "input": "range",
+                "min": 0.001,
+                "max": 1,
+                "step": 0.001
+            }
+        }
+    ],
+    "layer": [
+        {
+            "mark": "line",
+            "encoding": {
+                "x": {
+                    "field": "step",
+                    "type": "quantitative",
+                    "title": "step"
+                },
+                "y": {
+                    "field": "loss",
+                    "type": "quantitative",
+                    "title": "loss",
+                    "scale": {
+                        "zero": false
+                    }
+                },
+                "color": {
+                    "field": "rev",
+                    "type": "nominal"
+                }
+            },
+            "transform": [
+                {
+                    "loess": "loss",
+                    "on": "step",
+                    "groupby": [
+                        "rev",
+                        "filename",
+                        "field",
+                        "filename::field"
+                    ],
+                    "bandwidth": {
+                        "signal": "smooth"
+                    }
+                }
+            ]
+        },
+        {
+            "mark": {
+                "type": "point",
+                "tooltip": {
+                    "content": "data"
+                }
+            },
+            "encoding": {
+                "x": {
+                    "field": "step",
+                    "type": "quantitative",
+                    "title": "step"
+                },
+                "y": {
+                    "field": "loss",
+                    "type": "quantitative",
+                    "title": "loss",
+                    "scale": {
+                        "zero": false
+                    }
+                },
+                "color": {
+                    "field": "rev",
+                    "type": "nominal"
+                }
+            }
+        }
+    ]
+}
+;
+            vegaEmbed('#static_train_step_loss', spec);
+        </script>
+    </div>
+    
+
+    <div id = "static_train_step_acc">
+        <script type = "text/javascript">
+            var spec = {
+    "$schema": "https://vega.github.io/schema/vega-lite/v5.json",
+    "data": {
+        "values": [
+    {
+        "acc": "0.9351462125778198",
+        "rev": "workspace",
+        "step": "49"
+    },
+    {
+        "acc": "0.9413394927978516",
+        "rev": "workspace",
+        "step": "99"
+    },
+    {
+        "acc": "0.9441940188407898",
+        "rev": "workspace",
+        "step": "149"
+    },
+    {
+        "acc": "0.9411057829856873",
+        "rev": "workspace",
+        "step": "199"
+    },
+    {
+        "acc": "0.9473268389701843",
+        "rev": "workspace",
+        "step": "249"
+    },
+    {
+        "acc": "0.9481392502784729",
+        "rev": "workspace",
+        "step": "299"
+    },
+    {
+        "acc": "0.9496806263923645",
+        "rev": "workspace",
+        "step": "349"
+    },
+    {
+        "acc": "0.9507378339767456",
+        "rev": "workspace",
+        "step": "399"
+    },
+    {
+        "acc": "0.9515669345855713",
+        "rev": "workspace",
+        "step": "449"
+    },
+    {
+        "acc": "0.9514946341514587",
+        "rev": "workspace",
+        "step": "499"
+    },
+    {
+        "acc": "0.9524962306022644",
+        "rev": "workspace",
+        "step": "549"
+    },
+    {
+        "acc": "0.9543380737304688",
+        "rev": "workspace",
+        "step": "599"
+    },
+    {
+        "acc": "0.9561576247215271",
+        "rev": "workspace",
+        "step": "649"
+    },
+    {
+        "acc": "0.9550002217292786",
+        "rev": "workspace",
+        "step": "699"
+    },
+    {
+        "acc": "0.9548221826553345",
+        "rev": "workspace",
+        "step": "749"
+    },
+    {
+        "acc": "0.953492283821106",
+        "rev": "workspace",
+        "step": "785"
+    }
+]
+    },
+    "title": "train/step/acc",
+    "width": 300,
+    "height": 300,
+    "params": [
+        {
+            "name": "smooth",
+            "value": 0.001,
+            "bind": {
+                "input": "range",
+                "min": 0.001,
+                "max": 1,
+                "step": 0.001
+            }
+        }
+    ],
+    "layer": [
+        {
+            "mark": "line",
+            "encoding": {
+                "x": {
+                    "field": "step",
+                    "type": "quantitative",
+                    "title": "step"
+                },
+                "y": {
+                    "field": "acc",
+                    "type": "quantitative",
+                    "title": "acc",
+                    "scale": {
+                        "zero": false
+                    }
+                },
+                "color": {
+                    "field": "rev",
+                    "type": "nominal"
+                }
+            },
+            "transform": [
+                {
+                    "loess": "acc",
+                    "on": "step",
+                    "groupby": [
+                        "rev",
+                        "filename",
+                        "field",
+                        "filename::field"
+                    ],
+                    "bandwidth": {
+                        "signal": "smooth"
+                    }
+                }
+            ]
+        },
+        {
+            "mark": {
+                "type": "point",
+                "tooltip": {
+                    "content": "data"
+                }
+            },
+            "encoding": {
+                "x": {
+                    "field": "step",
+                    "type": "quantitative",
+                    "title": "step"
+                },
+                "y": {
+                    "field": "acc",
+                    "type": "quantitative",
+                    "title": "acc",
+                    "scale": {
+                        "zero": false
+                    }
+                },
+                "color": {
+                    "field": "rev",
+                    "type": "nominal"
+                }
+            }
+        }
+    ]
+}
+;
+            vegaEmbed('#static_train_step_acc', spec);
+        </script>
+    </div>
+    
+
+    <div id = "static_val_epoch_loss">
+        <script type = "text/javascript">
+            var spec = {
+    "$schema": "https://vega.github.io/schema/vega-lite/v5.json",
+    "data": {
+        "values": [
+    {
+        "loss": "0.19155141711235046",
+        "rev": "workspace",
+        "step": "156"
+    },
+    {
+        "loss": "0.17095120251178741",
+        "rev": "workspace",
+        "step": "313"
+    },
+    {
+        "loss": "0.15976333618164062",
+        "rev": "workspace",
+        "step": "470"
+    },
+    {
+        "loss": "0.15566134452819824",
+        "rev": "workspace",
+        "step": "627"
+    },
+    {
+        "loss": "0.15006494522094727",
+        "rev": "workspace",
+        "step": "784"
+    },
+    {
+        "loss": "0.14786356687545776",
+        "rev": "workspace",
+        "step": "785"
+    }
+]
+    },
+    "title": "val/epoch/loss",
+    "width": 300,
+    "height": 300,
+    "params": [
+        {
+            "name": "smooth",
+            "value": 0.001,
+            "bind": {
+                "input": "range",
+                "min": 0.001,
+                "max": 1,
+                "step": 0.001
+            }
+        }
+    ],
+    "layer": [
+        {
+            "mark": "line",
+            "encoding": {
+                "x": {
+                    "field": "step",
+                    "type": "quantitative",
+                    "title": "step"
+                },
+                "y": {
+                    "field": "loss",
+                    "type": "quantitative",
+                    "title": "loss",
+                    "scale": {
+                        "zero": false
+                    }
+                },
+                "color": {
+                    "field": "rev",
+                    "type": "nominal"
+                }
+            },
+            "transform": [
+                {
+                    "loess": "loss",
+                    "on": "step",
+                    "groupby": [
+                        "rev",
+                        "filename",
+                        "field",
+                        "filename::field"
+                    ],
+                    "bandwidth": {
+                        "signal": "smooth"
+                    }
+                }
+            ]
+        },
+        {
+            "mark": {
+                "type": "point",
+                "tooltip": {
+                    "content": "data"
+                }
+            },
+            "encoding": {
+                "x": {
+                    "field": "step",
+                    "type": "quantitative",
+                    "title": "step"
+                },
+                "y": {
+                    "field": "loss",
+                    "type": "quantitative",
+                    "title": "loss",
+                    "scale": {
+                        "zero": false
+                    }
+                },
+                "color": {
+                    "field": "rev",
+                    "type": "nominal"
+                }
+            }
+        }
+    ]
+}
+;
+            vegaEmbed('#static_val_epoch_loss', spec);
+        </script>
+    </div>
+    
+
+    <div id = "static_val_epoch_acc">
+        <script type = "text/javascript">
+            var spec = {
+    "$schema": "https://vega.github.io/schema/vega-lite/v5.json",
+    "data": {
+        "values": [
+    {
+        "acc": "0.94339519739151",
+        "rev": "workspace",
+        "step": "156"
+    },
+    {
+        "acc": "0.9485845565795898",
+        "rev": "workspace",
+        "step": "313"
+    },
+    {
+        "acc": "0.9512543082237244",
+        "rev": "workspace",
+        "step": "470"
+    },
+    {
+        "acc": "0.9524748921394348",
+        "rev": "workspace",
+        "step": "627"
+    },
+    {
+        "acc": "0.9540064334869385",
+        "rev": "workspace",
+        "step": "784"
+    },
+    {
+        "acc": "0.9549577832221985",
+        "rev": "workspace",
+        "step": "785"
+    }
+]
+    },
+    "title": "val/epoch/acc",
+    "width": 300,
+    "height": 300,
+    "params": [
+        {
+            "name": "smooth",
+            "value": 0.001,
+            "bind": {
+                "input": "range",
+                "min": 0.001,
+                "max": 1,
+                "step": 0.001
+            }
+        }
+    ],
+    "layer": [
+        {
+            "mark": "line",
+            "encoding": {
+                "x": {
+                    "field": "step",
+                    "type": "quantitative",
+                    "title": "step"
+                },
+                "y": {
+                    "field": "acc",
+                    "type": "quantitative",
+                    "title": "acc",
+                    "scale": {
+                        "zero": false
+                    }
+                },
+                "color": {
+                    "field": "rev",
+                    "type": "nominal"
+                }
+            },
+            "transform": [
+                {
+                    "loess": "acc",
+                    "on": "step",
+                    "groupby": [
+                        "rev",
+                        "filename",
+                        "field",
+                        "filename::field"
+                    ],
+                    "bandwidth": {
+                        "signal": "smooth"
+                    }
+                }
+            ]
+        },
+        {
+            "mark": {
+                "type": "point",
+                "tooltip": {
+                    "content": "data"
+                }
+            },
+            "encoding": {
+                "x": {
+                    "field": "step",
+                    "type": "quantitative",
+                    "title": "step"
+                },
+                "y": {
+                    "field": "acc",
+                    "type": "quantitative",
+                    "title": "acc",
+                    "scale": {
+                        "zero": false
+                    }
+                },
+                "color": {
+                    "field": "rev",
+                    "type": "nominal"
+                }
+            }
+        }
+    ]
+}
+;
+            vegaEmbed('#static_val_epoch_acc', spec);
+        </script>
+    </div>
+    
+
+    <div id = "static_val_step_loss">
+        <script type = "text/javascript">
+            var spec = {
+    "$schema": "https://vega.github.io/schema/vega-lite/v5.json",
+    "data": {
+        "values": [
+    {
+        "loss": "0.18954239785671234",
+        "rev": "workspace",
+        "step": "0"
+    },
+    {
+        "loss": "0.18777845799922943",
+        "rev": "workspace",
+        "step": "1"
+    },
+    {
+        "loss": "0.19335876405239105",
+        "rev": "workspace",
+        "step": "2"
+    },
+    {
+        "loss": "0.1916428953409195",
+        "rev": "workspace",
+        "step": "3"
+    },
+    {
+        "loss": "0.18685737252235413",
+        "rev": "workspace",
+        "step": "4"
+    },
+    {
+        "loss": "0.19192950427532196",
+        "rev": "workspace",
+        "step": "5"
+    },
+    {
+        "loss": "0.18908998370170593",
+        "rev": "workspace",
+        "step": "6"
+    },
+    {
+        "loss": "0.1885450780391693",
+        "rev": "workspace",
+        "step": "7"
+    },
+    {
+        "loss": "0.19075854122638702",
+        "rev": "workspace",
+        "step": "8"
+    },
+    {
+        "loss": "0.19299699366092682",
+        "rev": "workspace",
+        "step": "9"
+    },
+    {
+        "loss": "0.19128815829753876",
+        "rev": "workspace",
+        "step": "10"
+    },
+    {
+        "loss": "0.19184640049934387",
+        "rev": "workspace",
+        "step": "11"
+    },
+    {
+        "loss": "0.19821371138095856",
+        "rev": "workspace",
+        "step": "12"
+    },
+    {
+        "loss": "0.1942172795534134",
+        "rev": "workspace",
+        "step": "13"
+    },
+    {
+        "loss": "0.18974532186985016",
+        "rev": "workspace",
+        "step": "14"
+    },
+    {
+        "loss": "0.19343197345733643",
+        "rev": "workspace",
+        "step": "15"
+    },
+    {
+        "loss": "0.18840835988521576",
+        "rev": "workspace",
+        "step": "16"
+    },
+    {
+        "loss": "0.18714113533496857",
+        "rev": "workspace",
+        "step": "17"
+    },
+    {
+        "loss": "0.19423452019691467",
+        "rev": "workspace",
+        "step": "18"
+    },
+    {
+        "loss": "0.19552664458751678",
+        "rev": "workspace",
+        "step": "19"
+    },
+    {
+        "loss": "0.18308503925800323",
+        "rev": "workspace",
+        "step": "20"
+    },
+    {
+        "loss": "0.19557350873947144",
+        "rev": "workspace",
+        "step": "21"
+    },
+    {
+        "loss": "0.18857745826244354",
+        "rev": "workspace",
+        "step": "22"
+    },
+    {
+        "loss": "0.187704935669899",
+        "rev": "workspace",
+        "step": "23"
+    },
+    {
+        "loss": "0.19161254167556763",
+        "rev": "workspace",
+        "step": "24"
+    },
+    {
+        "loss": "0.1871858537197113",
+        "rev": "workspace",
+        "step": "25"
+    },
+    {
+        "loss": "0.1869335174560547",
+        "rev": "workspace",
+        "step": "26"
+    },
+    {
+        "loss": "0.18972565233707428",
+        "rev": "workspace",
+        "step": "27"
+    },
+    {
+        "loss": "0.1897091120481491",
+        "rev": "workspace",
+        "step": "28"
+    },
+    {
+        "loss": "0.19502416253089905",
+        "rev": "workspace",
+        "step": "29"
+    },
+    {
+        "loss": "0.19877761602401733",
+        "rev": "workspace",
+        "step": "30"
+    },
+    {
+        "loss": "0.1934993416070938",
+        "rev": "workspace",
+        "step": "31"
+    },
+    {
+        "loss": "0.19255265593528748",
+        "rev": "workspace",
+        "step": "32"
+    },
+    {
+        "loss": "0.1903475672006607",
+        "rev": "workspace",
+        "step": "33"
+    },
+    {
+        "loss": "0.19089432060718536",
+        "rev": "workspace",
+        "step": "34"
+    },
+    {
+        "loss": "0.19387240707874298",
+        "rev": "workspace",
+        "step": "35"
+    },
+    {
+        "loss": "0.19474995136260986",
+        "rev": "workspace",
+        "step": "36"
+    },
+    {
+        "loss": "0.19597849249839783",
+        "rev": "workspace",
+        "step": "37"
+    },
+    {
+        "loss": "0.1975763887166977",
+        "rev": "workspace",
+        "step": "38"
+    },
+    {
+        "loss": "0.20067720115184784",
+        "rev": "workspace",
+        "step": "39"
+    },
+    {
+        "loss": "0.16890987753868103",
+        "rev": "workspace",
+        "step": "40"
+    },
+    {
+        "loss": "0.16668696701526642",
+        "rev": "workspace",
+        "step": "41"
+    },
+    {
+        "loss": "0.17310765385627747",
+        "rev": "workspace",
+        "step": "42"
+    },
+    {
+        "loss": "0.17171797156333923",
+        "rev": "workspace",
+        "step": "43"
+    },
+    {
+        "loss": "0.16698409616947174",
+        "rev": "workspace",
+        "step": "44"
+    },
+    {
+        "loss": "0.1721339374780655",
+        "rev": "workspace",
+        "step": "45"
+    },
+    {
+        "loss": "0.16842137277126312",
+        "rev": "workspace",
+        "step": "46"
+    },
+    {
+        "loss": "0.16842789947986603",
+        "rev": "workspace",
+        "step": "47"
+    },
+    {
+        "loss": "0.16991975903511047",
+        "rev": "workspace",
+        "step": "48"
+    },
+    {
+        "loss": "0.17185759544372559",
+        "rev": "workspace",
+        "step": "49"
+    },
+    {
+        "loss": "0.1706649214029312",
+        "rev": "workspace",
+        "step": "50"
+    },
+    {
+        "loss": "0.1711168736219406",
+        "rev": "workspace",
+        "step": "51"
+    },
+    {
+        "loss": "0.17653705179691315",
+        "rev": "workspace",
+        "step": "52"
+    },
+    {
+        "loss": "0.1734970360994339",
+        "rev": "workspace",
+        "step": "53"
+    },
+    {
+        "loss": "0.16921594738960266",
+        "rev": "workspace",
+        "step": "54"
+    },
+    {
+        "loss": "0.17335516214370728",
+        "rev": "workspace",
+        "step": "55"
+    },
+    {
+        "loss": "0.16775347292423248",
+        "rev": "workspace",
+        "step": "56"
+    },
+    {
+        "loss": "0.1671774834394455",
+        "rev": "workspace",
+        "step": "57"
+    },
+    {
+        "loss": "0.17358556389808655",
+        "rev": "workspace",
+        "step": "58"
+    },
+    {
+        "loss": "0.1746053844690323",
+        "rev": "workspace",
+        "step": "59"
+    },
+    {
+        "loss": "0.16362130641937256",
+        "rev": "workspace",
+        "step": "60"
+    },
+    {
+        "loss": "0.17471890151500702",
+        "rev": "workspace",
+        "step": "61"
+    },
+    {
+        "loss": "0.1679535210132599",
+        "rev": "workspace",
+        "step": "62"
+    },
+    {
+        "loss": "0.1673317402601242",
+        "rev": "workspace",
+        "step": "63"
+    },
+    {
+        "loss": "0.17050547897815704",
+        "rev": "workspace",
+        "step": "64"
+    },
+    {
+        "loss": "0.16626961529254913",
+        "rev": "workspace",
+        "step": "65"
+    },
+    {
+        "loss": "0.16638542711734772",
+        "rev": "workspace",
+        "step": "66"
+    },
+    {
+        "loss": "0.16915662586688995",
+        "rev": "workspace",
+        "step": "67"
+    },
+    {
+        "loss": "0.168901726603508",
+        "rev": "workspace",
+        "step": "68"
+    },
+    {
+        "loss": "0.17346809804439545",
+        "rev": "workspace",
+        "step": "69"
+    },
+    {
+        "loss": "0.17788034677505493",
+        "rev": "workspace",
+        "step": "70"
+    },
+    {
+        "loss": "0.17348165810108185",
+        "rev": "workspace",
+        "step": "71"
+    },
+    {
+        "loss": "0.1720806509256363",
+        "rev": "workspace",
+        "step": "72"
+    },
+    {
+        "loss": "0.16918407380580902",
+        "rev": "workspace",
+        "step": "73"
+    },
+    {
+        "loss": "0.17068342864513397",
+        "rev": "workspace",
+        "step": "74"
+    },
+    {
+        "loss": "0.17371317744255066",
+        "rev": "workspace",
+        "step": "75"
+    },
+    {
+        "loss": "0.17367027699947357",
+        "rev": "workspace",
+        "step": "76"
+    },
+    {
+        "loss": "0.17550790309906006",
+        "rev": "workspace",
+        "step": "77"
+    },
+    {
+        "loss": "0.17630836367607117",
+        "rev": "workspace",
+        "step": "78"
+    },
+    {
+        "loss": "0.18053345382213593",
+        "rev": "workspace",
+        "step": "79"
+    },
+    {
+        "loss": "0.15847662091255188",
+        "rev": "workspace",
+        "step": "80"
+    },
+    {
+        "loss": "0.15531523525714874",
+        "rev": "workspace",
+        "step": "81"
+    },
+    {
+        "loss": "0.16215230524539948",
+        "rev": "workspace",
+        "step": "82"
+    },
+    {
+        "loss": "0.16051554679870605",
+        "rev": "workspace",
+        "step": "83"
+    },
+    {
+        "loss": "0.15596000850200653",
+        "rev": "workspace",
+        "step": "84"
+    },
+    {
+        "loss": "0.16099928319454193",
+        "rev": "workspace",
+        "step": "85"
+    },
+    {
+        "loss": "0.15718165040016174",
+        "rev": "workspace",
+        "step": "86"
+    },
+    {
+        "loss": "0.15760867297649384",
+        "rev": "workspace",
+        "step": "87"
+    },
+    {
+        "loss": "0.1587228626012802",
+        "rev": "workspace",
+        "step": "88"
+    },
+    {
+        "loss": "0.16005446016788483",
+        "rev": "workspace",
+        "step": "89"
+    },
+    {
+        "loss": "0.15993572771549225",
+        "rev": "workspace",
+        "step": "90"
+    },
+    {
+        "loss": "0.15990228950977325",
+        "rev": "workspace",
+        "step": "91"
+    },
+    {
+        "loss": "0.16508522629737854",
+        "rev": "workspace",
+        "step": "92"
+    },
+    {
+        "loss": "0.1625533103942871",
+        "rev": "workspace",
+        "step": "93"
+    },
+    {
+        "loss": "0.157459557056427",
+        "rev": "workspace",
+        "step": "94"
+    },
+    {
+        "loss": "0.16159726679325104",
+        "rev": "workspace",
+        "step": "95"
+    },
+    {
+        "loss": "0.1569654643535614",
+        "rev": "workspace",
+        "step": "96"
+    },
+    {
+        "loss": "0.1566414088010788",
+        "rev": "workspace",
+        "step": "97"
+    },
+    {
+        "loss": "0.16236965358257294",
+        "rev": "workspace",
+        "step": "98"
+    },
+    {
+        "loss": "0.16345424950122833",
+        "rev": "workspace",
+        "step": "99"
+    },
+    {
+        "loss": "0.1524713635444641",
+        "rev": "workspace",
+        "step": "100"
+    },
+    {
+        "loss": "0.1633945107460022",
+        "rev": "workspace",
+        "step": "101"
+    },
+    {
+        "loss": "0.15649600327014923",
+        "rev": "workspace",
+        "step": "102"
+    },
+    {
+        "loss": "0.15640904009342194",
+        "rev": "workspace",
+        "step": "103"
+    },
+    {
+        "loss": "0.15919363498687744",
+        "rev": "workspace",
+        "step": "104"
+    },
+    {
+        "loss": "0.15473659336566925",
+        "rev": "workspace",
+        "step": "105"
+    },
+    {
+        "loss": "0.15519379079341888",
+        "rev": "workspace",
+        "step": "106"
+    },
+    {
+        "loss": "0.15736326575279236",
+        "rev": "workspace",
+        "step": "107"
+    },
+    {
+        "loss": "0.1581316590309143",
+        "rev": "workspace",
+        "step": "108"
+    },
+    {
+        "loss": "0.16192534565925598",
+        "rev": "workspace",
+        "step": "109"
+    },
+    {
+        "loss": "0.1665692776441574",
+        "rev": "workspace",
+        "step": "110"
+    },
+    {
+        "loss": "0.16218721866607666",
+        "rev": "workspace",
+        "step": "111"
+    },
+    {
+        "loss": "0.16093595325946808",
+        "rev": "workspace",
+        "step": "112"
+    },
+    {
+        "loss": "0.1576903760433197",
+        "rev": "workspace",
+        "step": "113"
+    },
+    {
+        "loss": "0.1600702852010727",
+        "rev": "workspace",
+        "step": "114"
+    },
+    {
+        "loss": "0.1630634367465973",
+        "rev": "workspace",
+        "step": "115"
+    },
+    {
+        "loss": "0.16210739314556122",
+        "rev": "workspace",
+        "step": "116"
+    },
+    {
+        "loss": "0.16414374113082886",
+        "rev": "workspace",
+        "step": "117"
+    },
+    {
+        "loss": "0.16506370902061462",
+        "rev": "workspace",
+        "step": "118"
+    },
+    {
+        "loss": "0.1705283373594284",
+        "rev": "workspace",
+        "step": "119"
+    },
+    {
+        "loss": "0.15429410338401794",
+        "rev": "workspace",
+        "step": "120"
+    },
+    {
+        "loss": "0.15083704888820648",
+        "rev": "workspace",
+        "step": "121"
+    },
+    {
+        "loss": "0.15806618332862854",
+        "rev": "workspace",
+        "step": "122"
+    },
+    {
+        "loss": "0.15616661310195923",
+        "rev": "workspace",
+        "step": "123"
+    },
+    {
+        "loss": "0.1520536094903946",
+        "rev": "workspace",
+        "step": "124"
+    },
+    {
+        "loss": "0.15736006200313568",
+        "rev": "workspace",
+        "step": "125"
+    },
+    {
+        "loss": "0.15311186015605927",
+        "rev": "workspace",
+        "step": "126"
+    },
+    {
+        "loss": "0.15335308015346527",
+        "rev": "workspace",
+        "step": "127"
+    },
+    {
+        "loss": "0.15451930463314056",
+        "rev": "workspace",
+        "step": "128"
+    },
+    {
+        "loss": "0.1559164971113205",
+        "rev": "workspace",
+        "step": "129"
+    },
+    {
+        "loss": "0.15596653521060944",
+        "rev": "workspace",
+        "step": "130"
+    },
+    {
+        "loss": "0.15583129227161407",
+        "rev": "workspace",
+        "step": "131"
+    },
+    {
+        "loss": "0.16092467308044434",
+        "rev": "workspace",
+        "step": "132"
+    },
+    {
+        "loss": "0.15811192989349365",
+        "rev": "workspace",
+        "step": "133"
+    },
+    {
+        "loss": "0.15335838496685028",
+        "rev": "workspace",
+        "step": "134"
+    },
+    {
+        "loss": "0.15789228677749634",
+        "rev": "workspace",
+        "step": "135"
+    },
+    {
+        "loss": "0.1529383510351181",
+        "rev": "workspace",
+        "step": "136"
+    },
+    {
+        "loss": "0.1531049758195877",
+        "rev": "workspace",
+        "step": "137"
+    },
+    {
+        "loss": "0.15791182219982147",
+        "rev": "workspace",
+        "step": "138"
+    },
+    {
+        "loss": "0.1591513752937317",
+        "rev": "workspace",
+        "step": "139"
+    },
+    {
+        "loss": "0.147896870970726",
+        "rev": "workspace",
+        "step": "140"
+    },
+    {
+        "loss": "0.1594710499048233",
+        "rev": "workspace",
+        "step": "141"
+    },
+    {
+        "loss": "0.1526467353105545",
+        "rev": "workspace",
+        "step": "142"
+    },
+    {
+        "loss": "0.15243789553642273",
+        "rev": "workspace",
+        "step": "143"
+    },
+    {
+        "loss": "0.15517625212669373",
+        "rev": "workspace",
+        "step": "144"
+    },
+    {
+        "loss": "0.15046192705631256",
+        "rev": "workspace",
+        "step": "145"
+    },
+    {
+        "loss": "0.1508961170911789",
+        "rev": "workspace",
+        "step": "146"
+    },
+    {
+        "loss": "0.1533309817314148",
+        "rev": "workspace",
+        "step": "147"
+    },
+    {
+        "loss": "0.1544230580329895",
+        "rev": "workspace",
+        "step": "148"
+    },
+    {
+        "loss": "0.1577863097190857",
+        "rev": "workspace",
+        "step": "149"
+    },
+    {
+        "loss": "0.16270336508750916",
+        "rev": "workspace",
+        "step": "150"
+    },
+    {
+        "loss": "0.15819711983203888",
+        "rev": "workspace",
+        "step": "151"
+    },
+    {
+        "loss": "0.15685655176639557",
+        "rev": "workspace",
+        "step": "152"
+    },
+    {
+        "loss": "0.15320263803005219",
+        "rev": "workspace",
+        "step": "153"
+    },
+    {
+        "loss": "0.15589334070682526",
+        "rev": "workspace",
+        "step": "154"
+    },
+    {
+        "loss": "0.1589004099369049",
+        "rev": "workspace",
+        "step": "155"
+    },
+    {
+        "loss": "0.15787066519260406",
+        "rev": "workspace",
+        "step": "156"
+    },
+    {
+        "loss": "0.16045357286930084",
+        "rev": "workspace",
+        "step": "157"
+    },
+    {
+        "loss": "0.1606317013502121",
+        "rev": "workspace",
+        "step": "158"
+    },
+    {
+        "loss": "0.16663724184036255",
+        "rev": "workspace",
+        "step": "159"
+    },
+    {
+        "loss": "0.148406520485878",
+        "rev": "workspace",
+        "step": "160"
+    },
+    {
+        "loss": "0.14538130164146423",
+        "rev": "workspace",
+        "step": "161"
+    },
+    {
+        "loss": "0.15206043422222137",
+        "rev": "workspace",
+        "step": "162"
+    },
+    {
+        "loss": "0.15038181841373444",
+        "rev": "workspace",
+        "step": "163"
+    },
+    {
+        "loss": "0.1466580033302307",
+        "rev": "workspace",
+        "step": "164"
+    },
+    {
+        "loss": "0.15171615779399872",
+        "rev": "workspace",
+        "step": "165"
+    },
+    {
+        "loss": "0.14774231612682343",
+        "rev": "workspace",
+        "step": "166"
+    },
+    {
+        "loss": "0.14776629209518433",
+        "rev": "workspace",
+        "step": "167"
+    },
+    {
+        "loss": "0.14889374375343323",
+        "rev": "workspace",
+        "step": "168"
+    },
+    {
+        "loss": "0.15073898434638977",
+        "rev": "workspace",
+        "step": "169"
+    },
+    {
+        "loss": "0.150920569896698",
+        "rev": "workspace",
+        "step": "170"
+    },
+    {
+        "loss": "0.15034422278404236",
+        "rev": "workspace",
+        "step": "171"
+    },
+    {
+        "loss": "0.15569482743740082",
+        "rev": "workspace",
+        "step": "172"
+    },
+    {
+        "loss": "0.1523071974515915",
+        "rev": "workspace",
+        "step": "173"
+    },
+    {
+        "loss": "0.14776641130447388",
+        "rev": "workspace",
+        "step": "174"
+    },
+    {
+        "loss": "0.15201731026172638",
+        "rev": "workspace",
+        "step": "175"
+    },
+    {
+        "loss": "0.14743560552597046",
+        "rev": "workspace",
+        "step": "176"
+    },
+    {
+        "loss": "0.1476994752883911",
+        "rev": "workspace",
+        "step": "177"
+    },
+    {
+        "loss": "0.1521381139755249",
+        "rev": "workspace",
+        "step": "178"
+    },
+    {
+        "loss": "0.15300767123699188",
+        "rev": "workspace",
+        "step": "179"
+    },
+    {
+        "loss": "0.1428629606962204",
+        "rev": "workspace",
+        "step": "180"
+    },
+    {
+        "loss": "0.1538080871105194",
+        "rev": "workspace",
+        "step": "181"
+    },
+    {
+        "loss": "0.14680466055870056",
+        "rev": "workspace",
+        "step": "182"
+    },
+    {
+        "loss": "0.14709536731243134",
+        "rev": "workspace",
+        "step": "183"
+    },
+    {
+        "loss": "0.14910823106765747",
+        "rev": "workspace",
+        "step": "184"
+    },
+    {
+        "loss": "0.1449478566646576",
+        "rev": "workspace",
+        "step": "185"
+    },
+    {
+        "loss": "0.1451091766357422",
+        "rev": "workspace",
+        "step": "186"
+    },
+    {
+        "loss": "0.14740370213985443",
+        "rev": "workspace",
+        "step": "187"
+    },
+    {
+        "loss": "0.14887093007564545",
+        "rev": "workspace",
+        "step": "188"
+    },
+    {
+        "loss": "0.1524612456560135",
+        "rev": "workspace",
+        "step": "189"
+    },
+    {
+        "loss": "0.15713848173618317",
+        "rev": "workspace",
+        "step": "190"
+    },
+    {
+        "loss": "0.1524372100830078",
+        "rev": "workspace",
+        "step": "191"
+    },
+    {
+        "loss": "0.1512836068868637",
+        "rev": "workspace",
+        "step": "192"
+    },
+    {
+        "loss": "0.14750461280345917",
+        "rev": "workspace",
+        "step": "193"
+    },
+    {
+        "loss": "0.15008823573589325",
+        "rev": "workspace",
+        "step": "194"
+    },
+    {
+        "loss": "0.15309731662273407",
+        "rev": "workspace",
+        "step": "195"
+    },
+    {
+        "loss": "0.15267325937747955",
+        "rev": "workspace",
+        "step": "196"
+    },
+    {
+        "loss": "0.15515261888504028",
+        "rev": "workspace",
+        "step": "197"
+    },
+    {
+        "loss": "0.1550493985414505",
+        "rev": "workspace",
+        "step": "198"
+    },
+    {
+        "loss": "0.15900567173957825",
+        "rev": "workspace",
+        "step": "199"
+    },
+    {
+        "loss": "0.1470361351966858",
+        "rev": "workspace",
+        "step": "200"
+    },
+    {
+        "loss": "0.14314167201519012",
+        "rev": "workspace",
+        "step": "201"
+    },
+    {
+        "loss": "0.1501336544752121",
+        "rev": "workspace",
+        "step": "202"
+    },
+    {
+        "loss": "0.14756664633750916",
+        "rev": "workspace",
+        "step": "203"
+    },
+    {
+        "loss": "0.14390826225280762",
+        "rev": "workspace",
+        "step": "204"
+    },
+    {
+        "loss": "0.149147167801857",
+        "rev": "workspace",
+        "step": "205"
+    },
+    {
+        "loss": "0.1454341858625412",
+        "rev": "workspace",
+        "step": "206"
+    },
+    {
+        "loss": "0.1459791362285614",
+        "rev": "workspace",
+        "step": "207"
+    },
+    {
+        "loss": "0.1467878222465515",
+        "rev": "workspace",
+        "step": "208"
+    },
+    {
+        "loss": "0.14865081012248993",
+        "rev": "workspace",
+        "step": "209"
+    },
+    {
+        "loss": "0.14888787269592285",
+        "rev": "workspace",
+        "step": "210"
+    },
+    {
+        "loss": "0.14859135448932648",
+        "rev": "workspace",
+        "step": "211"
+    },
+    {
+        "loss": "0.15322694182395935",
+        "rev": "workspace",
+        "step": "212"
+    },
+    {
+        "loss": "0.1505272388458252",
+        "rev": "workspace",
+        "step": "213"
+    },
+    {
+        "loss": "0.14547958970069885",
+        "rev": "workspace",
+        "step": "214"
+    },
+    {
+        "loss": "0.1503702998161316",
+        "rev": "workspace",
+        "step": "215"
+    },
+    {
+        "loss": "0.14529691636562347",
+        "rev": "workspace",
+        "step": "216"
+    },
+    {
+        "loss": "0.14528921246528625",
+        "rev": "workspace",
+        "step": "217"
+    },
+    {
+        "loss": "0.14989277720451355",
+        "rev": "workspace",
+        "step": "218"
+    },
+    {
+        "loss": "0.15109793841838837",
+        "rev": "workspace",
+        "step": "219"
+    },
+    {
+        "loss": "0.141425222158432",
+        "rev": "workspace",
+        "step": "220"
+    },
+    {
+        "loss": "0.1505328267812729",
+        "rev": "workspace",
+        "step": "221"
+    },
+    {
+        "loss": "0.14409764111042023",
+        "rev": "workspace",
+        "step": "222"
+    },
+    {
+        "loss": "0.14529730379581451",
+        "rev": "workspace",
+        "step": "223"
+    },
+    {
+        "loss": "0.14665846526622772",
+        "rev": "workspace",
+        "step": "224"
+    },
+    {
+        "loss": "0.14372433722019196",
+        "rev": "workspace",
+        "step": "225"
+    },
+    {
+        "loss": "0.1429329812526703",
+        "rev": "workspace",
+        "step": "226"
+    },
+    {
+        "loss": "0.14489024877548218",
+        "rev": "workspace",
+        "step": "227"
+    },
+    {
+        "loss": "0.14646439254283905",
+        "rev": "workspace",
+        "step": "228"
+    },
+    {
+        "loss": "0.15021394193172455",
+        "rev": "workspace",
+        "step": "229"
+    },
+    {
+        "loss": "0.15463443100452423",
+        "rev": "workspace",
+        "step": "230"
+    },
+    {
+        "loss": "0.14983835816383362",
+        "rev": "workspace",
+        "step": "231"
+    },
+    {
+        "loss": "0.14874927699565887",
+        "rev": "workspace",
+        "step": "232"
+    },
+    {
+        "loss": "0.1457625776529312",
+        "rev": "workspace",
+        "step": "233"
+    },
+    {
+        "loss": "0.14786887168884277",
+        "rev": "workspace",
+        "step": "234"
+    },
+    {
+        "loss": "0.15108491480350494",
+        "rev": "workspace",
+        "step": "235"
+    },
+    {
+        "loss": "0.15002453327178955",
+        "rev": "workspace",
+        "step": "236"
+    },
+    {
+        "loss": "0.15286710858345032",
+        "rev": "workspace",
+        "step": "237"
+    },
+    {
+        "loss": "0.15253783762454987",
+        "rev": "workspace",
+        "step": "238"
+    },
+    {
+        "loss": "0.15791095793247223",
+        "rev": "workspace",
+        "step": "239"
+    }
+]
+    },
+    "title": "val/step/loss",
+    "width": 300,
+    "height": 300,
+    "params": [
+        {
+            "name": "smooth",
+            "value": 0.001,
+            "bind": {
+                "input": "range",
+                "min": 0.001,
+                "max": 1,
+                "step": 0.001
+            }
+        }
+    ],
+    "layer": [
+        {
+            "mark": "line",
+            "encoding": {
+                "x": {
+                    "field": "step",
+                    "type": "quantitative",
+                    "title": "step"
+                },
+                "y": {
+                    "field": "loss",
+                    "type": "quantitative",
+                    "title": "loss",
+                    "scale": {
+                        "zero": false
+                    }
+                },
+                "color": {
+                    "field": "rev",
+                    "type": "nominal"
+                }
+            },
+            "transform": [
+                {
+                    "loess": "loss",
+                    "on": "step",
+                    "groupby": [
+                        "rev",
+                        "filename",
+                        "field",
+                        "filename::field"
+                    ],
+                    "bandwidth": {
+                        "signal": "smooth"
+                    }
+                }
+            ]
+        },
+        {
+            "mark": {
+                "type": "point",
+                "tooltip": {
+                    "content": "data"
+                }
+            },
+            "encoding": {
+                "x": {
+                    "field": "step",
+                    "type": "quantitative",
+                    "title": "step"
+                },
+                "y": {
+                    "field": "loss",
+                    "type": "quantitative",
+                    "title": "loss",
+                    "scale": {
+                        "zero": false
+                    }
+                },
+                "color": {
+                    "field": "rev",
+                    "type": "nominal"
+                }
+            }
+        }
+    ]
+}
+;
+            vegaEmbed('#static_val_step_loss', spec);
+        </script>
+    </div>
+    
+
+    <div id = "static_val_step_acc">
+        <script type = "text/javascript">
+            var spec = {
+    "$schema": "https://vega.github.io/schema/vega-lite/v5.json",
+    "data": {
+        "values": [
+    {
+        "acc": "0.9434094429016113",
+        "rev": "workspace",
+        "step": "0"
+    },
+    {
+        "acc": "0.944583535194397",
+        "rev": "workspace",
+        "step": "1"
+    },
+    {
+        "acc": "0.9429754018783569",
+        "rev": "workspace",
+        "step": "2"
+    },
+    {
+        "acc": "0.9435763955116272",
+        "rev": "workspace",
+        "step": "3"
+    },
+    {
+        "acc": "0.944978654384613",
+        "rev": "workspace",
+        "step": "4"
+    },
+    {
+        "acc": "0.9428919553756714",
+        "rev": "workspace",
+        "step": "5"
+    },
+    {
+        "acc": "0.944411039352417",
+        "rev": "workspace",
+        "step": "6"
+    },
+    {
+        "acc": "0.9443331360816956",
+        "rev": "workspace",
+        "step": "7"
+    },
+    {
+        "acc": "0.9435708522796631",
+        "rev": "workspace",
+        "step": "8"
+    },
+    {
+        "acc": "0.9427639842033386",
+        "rev": "workspace",
+        "step": "9"
+    },
+    {
+        "acc": "0.9436821341514587",
+        "rev": "workspace",
+        "step": "10"
+    },
+    {
+        "acc": "0.9433927536010742",
+        "rev": "workspace",
+        "step": "11"
+    },
+    {
+        "acc": "0.9417123198509216",
+        "rev": "workspace",
+        "step": "12"
+    },
+    {
+        "acc": "0.9426582455635071",
+        "rev": "workspace",
+        "step": "13"
+    },
+    {
+        "acc": "0.9437711238861084",
+        "rev": "workspace",
+        "step": "14"
+    },
+    {
+        "acc": "0.942802906036377",
+        "rev": "workspace",
+        "step": "15"
+    },
+    {
+        "acc": "0.9441606402397156",
+        "rev": "workspace",
+        "step": "16"
+    },
+    {
+        "acc": "0.9449285268783569",
+        "rev": "workspace",
+        "step": "17"
+    },
+    {
+        "acc": "0.942457914352417",
+        "rev": "workspace",
+        "step": "18"
+    },
+    {
+        "acc": "0.9419794082641602",
+        "rev": "workspace",
+        "step": "19"
+    },
+    {
+        "acc": "0.9458299875259399",
+        "rev": "workspace",
+        "step": "20"
+    },
+    {
+        "acc": "0.9422798752784729",
+        "rev": "workspace",
+        "step": "21"
+    },
+    {
+        "acc": "0.9442942142486572",
+        "rev": "workspace",
+        "step": "22"
+    },
+    {
+        "acc": "0.9444555640220642",
+        "rev": "workspace",
+        "step": "23"
+    },
+    {
+        "acc": "0.9434094429016113",
+        "rev": "workspace",
+        "step": "24"
+    },
+    {
+        "acc": "0.9447727203369141",
+        "rev": "workspace",
+        "step": "25"
+    },
+    {
+        "acc": "0.9443665146827698",
+        "rev": "workspace",
+        "step": "26"
+    },
+    {
+        "acc": "0.9439325332641602",
+        "rev": "workspace",
+        "step": "27"
+    },
+    {
+        "acc": "0.9439937472343445",
+        "rev": "workspace",
+        "step": "28"
+    },
+    {
+        "acc": "0.942802906036377",
+        "rev": "workspace",
+        "step": "29"
+    },
+    {
+        "acc": "0.9416900277137756",
+        "rev": "workspace",
+        "step": "30"
+    },
+    {
+        "acc": "0.942480206489563",
+        "rev": "workspace",
+        "step": "31"
+    },
+    {
+        "acc": "0.9430922865867615",
+        "rev": "workspace",
+        "step": "32"
+    },
+    {
+        "acc": "0.9433816075325012",
+        "rev": "workspace",
+        "step": "33"
+    },
+    {
+        "acc": "0.9438657164573669",
+        "rev": "workspace",
+        "step": "34"
+    },
+    {
+        "acc": "0.9430533051490784",
+        "rev": "workspace",
+        "step": "35"
+    },
+    {
+        "acc": "0.9421629905700684",
+        "rev": "workspace",
+        "step": "36"
+    },
+    {
+        "acc": "0.9422408938407898",
+        "rev": "workspace",
+        "step": "37"
+    },
+    {
+        "acc": "0.9413728713989258",
+        "rev": "workspace",
+        "step": "38"
+    },
+    {
+        "acc": "0.9416844844818115",
+        "rev": "workspace",
+        "step": "39"
+    },
+    {
+        "acc": "0.9490240216255188",
+        "rev": "workspace",
+        "step": "40"
+    },
+    {
+        "acc": "0.9498308300971985",
+        "rev": "workspace",
+        "step": "41"
+    },
+    {
+        "acc": "0.9483006000518799",
+        "rev": "workspace",
+        "step": "42"
+    },
+    {
+        "acc": "0.9483451247215271",
+        "rev": "workspace",
+        "step": "43"
+    },
+    {
+        "acc": "0.9497863054275513",
+        "rev": "workspace",
+        "step": "44"
+    },
+    {
+        "acc": "0.9481893181800842",
+        "rev": "workspace",
+        "step": "45"
+    },
+    {
+        "acc": "0.9490796327590942",
+        "rev": "workspace",
+        "step": "46"
+    },
+    {
+        "acc": "0.949380099773407",
+        "rev": "workspace",
+        "step": "47"
+    },
+    {
+        "acc": "0.9491686820983887",
+        "rev": "workspace",
+        "step": "48"
+    },
+    {
+        "acc": "0.9485231637954712",
+        "rev": "workspace",
+        "step": "49"
+    },
+    {
+        "acc": "0.9489405155181885",
+        "rev": "workspace",
+        "step": "50"
+    },
+    {
+        "acc": "0.9486122131347656",
+        "rev": "workspace",
+        "step": "51"
+    },
+    {
+        "acc": "0.9471821784973145",
+        "rev": "workspace",
+        "step": "52"
+    },
+    {
+        "acc": "0.9476551413536072",
+        "rev": "workspace",
+        "step": "53"
+    },
+    {
+        "acc": "0.9486567378044128",
+        "rev": "workspace",
+        "step": "54"
+    },
+    {
+        "acc": "0.9479889869689941",
+        "rev": "workspace",
+        "step": "55"
+    },
+    {
+        "acc": "0.9495470523834229",
+        "rev": "workspace",
+        "step": "56"
+    },
+    {
+        "acc": "0.9499810934066772",
+        "rev": "workspace",
+        "step": "57"
+    },
+    {
+        "acc": "0.9477218985557556",
+        "rev": "workspace",
+        "step": "58"
+    },
+    {
+        "acc": "0.9472600817680359",
+        "rev": "workspace",
+        "step": "59"
+    },
+    {
+        "acc": "0.9509326219558716",
+        "rev": "workspace",
+        "step": "60"
+    },
+    {
+        "acc": "0.947822093963623",
+        "rev": "workspace",
+        "step": "61"
+    },
+    {
+        "acc": "0.9496917128562927",
+        "rev": "workspace",
+        "step": "62"
+    },
+    {
+        "acc": "0.949925422668457",
+        "rev": "workspace",
+        "step": "63"
+    },
+    {
+        "acc": "0.9486400485038757",
+        "rev": "workspace",
+        "step": "64"
+    },
+    {
+        "acc": "0.9498196840286255",
+        "rev": "workspace",
+        "step": "65"
+    },
+    {
+        "acc": "0.9495248198509216",
+        "rev": "workspace",
+        "step": "66"
+    },
+    {
+        "acc": "0.9492521286010742",
+        "rev": "workspace",
+        "step": "67"
+    },
+    {
+        "acc": "0.9492966532707214",
+        "rev": "workspace",
+        "step": "68"
+    },
+    {
+        "acc": "0.9480056762695312",
+        "rev": "workspace",
+        "step": "69"
+    },
+    {
+        "acc": "0.946742594242096",
+        "rev": "workspace",
+        "step": "70"
+    },
+    {
+        "acc": "0.9475494027137756",
+        "rev": "workspace",
+        "step": "71"
+    },
+    {
+        "acc": "0.9478777050971985",
+        "rev": "workspace",
+        "step": "72"
+    },
+    {
+        "acc": "0.9485788345336914",
+        "rev": "workspace",
+        "step": "73"
+    },
+    {
+        "acc": "0.9486511945724487",
+        "rev": "workspace",
+        "step": "74"
+    },
+    {
+        "acc": "0.9480947256088257",
+        "rev": "workspace",
+        "step": "75"
+    },
+    {
+        "acc": "0.9471988677978516",
+        "rev": "workspace",
+        "step": "76"
+    },
+    {
+        "acc": "0.94743812084198",
+        "rev": "workspace",
+        "step": "77"
+    },
+    {
+        "acc": "0.9468037486076355",
+        "rev": "workspace",
+        "step": "78"
+    },
+    {
+        "acc": "0.9450676441192627",
+        "rev": "workspace",
+        "step": "79"
+    },
+    {
+        "acc": "0.9512998461723328",
+        "rev": "workspace",
+        "step": "80"
+    },
+    {
+        "acc": "0.9524517059326172",
+        "rev": "workspace",
+        "step": "81"
+    },
+    {
+        "acc": "0.950465202331543",
+        "rev": "workspace",
+        "step": "82"
+    },
+    {
+        "acc": "0.9511218070983887",
+        "rev": "workspace",
+        "step": "83"
+    },
+    {
+        "acc": "0.9526520371437073",
+        "rev": "workspace",
+        "step": "84"
+    },
+    {
+        "acc": "0.9507378339767456",
+        "rev": "workspace",
+        "step": "85"
+    },
+    {
+        "acc": "0.9520566463470459",
+        "rev": "workspace",
+        "step": "86"
+    },
+    {
+        "acc": "0.9520844221115112",
+        "rev": "workspace",
+        "step": "87"
+    },
+    {
+        "acc": "0.9517672657966614",
+        "rev": "workspace",
+        "step": "88"
+    },
+    {
+        "acc": "0.9510828256607056",
+        "rev": "workspace",
+        "step": "89"
+    },
+    {
+        "acc": "0.9512831568717957",
+        "rev": "workspace",
+        "step": "90"
+    },
+    {
+        "acc": "0.9509938359260559",
+        "rev": "workspace",
+        "step": "91"
+    },
+    {
+        "acc": "0.9502036571502686",
+        "rev": "workspace",
+        "step": "92"
+    },
+    {
+        "acc": "0.9502092003822327",
+        "rev": "workspace",
+        "step": "93"
+    },
+    {
+        "acc": "0.9514890313148499",
+        "rev": "workspace",
+        "step": "94"
+    },
+    {
+        "acc": "0.9507099986076355",
+        "rev": "workspace",
+        "step": "95"
+    },
+    {
+        "acc": "0.9521901607513428",
+        "rev": "workspace",
+        "step": "96"
+    },
+    {
+        "acc": "0.9524628520011902",
+        "rev": "workspace",
+        "step": "97"
+    },
+    {
+        "acc": "0.9503872990608215",
+        "rev": "workspace",
+        "step": "98"
+    },
+    {
+        "acc": "0.9500033259391785",
+        "rev": "workspace",
+        "step": "99"
+    },
+    {
+        "acc": "0.9534978270530701",
+        "rev": "workspace",
+        "step": "100"
+    },
+    {
+        "acc": "0.9505764842033386",
+        "rev": "workspace",
+        "step": "101"
+    },
+    {
+        "acc": "0.9524405598640442",
+        "rev": "workspace",
+        "step": "102"
+    },
+    {
+        "acc": "0.9521567821502686",
+        "rev": "workspace",
+        "step": "103"
+    },
+    {
+        "acc": "0.9514723420143127",
+        "rev": "workspace",
+        "step": "104"
+    },
+    {
+        "acc": "0.9527243375778198",
+        "rev": "workspace",
+        "step": "105"
+    },
+    {
+        "acc": "0.9521567821502686",
+        "rev": "workspace",
+        "step": "106"
+    },
+    {
+        "acc": "0.9520399570465088",
+        "rev": "workspace",
+        "step": "107"
+    },
+    {
+        "acc": "0.9519509077072144",
+        "rev": "workspace",
+        "step": "108"
+    },
+    {
+        "acc": "0.9508101940155029",
+        "rev": "workspace",
+        "step": "109"
+    },
+    {
+        "acc": "0.9495303630828857",
+        "rev": "workspace",
+        "step": "110"
+    },
+    {
+        "acc": "0.9504985809326172",
+        "rev": "workspace",
+        "step": "111"
+    },
+    {
+        "acc": "0.9506877660751343",
+        "rev": "workspace",
+        "step": "112"
+    },
+    {
+        "acc": "0.9512330889701843",
+        "rev": "workspace",
+        "step": "113"
+    },
+    {
+        "acc": "0.9510661363601685",
+        "rev": "workspace",
+        "step": "114"
+    },
+    {
+        "acc": "0.9505931735038757",
+        "rev": "workspace",
+        "step": "115"
+    },
+    {
+        "acc": "0.9505152702331543",
+        "rev": "workspace",
+        "step": "116"
+    },
+    {
+        "acc": "0.9500700831413269",
+        "rev": "workspace",
+        "step": "117"
+    },
+    {
+        "acc": "0.94939124584198",
+        "rev": "workspace",
+        "step": "118"
+    },
+    {
+        "acc": "0.9489850401878357",
+        "rev": "workspace",
+        "step": "119"
+    },
+    {
+        "acc": "0.9527633190155029",
+        "rev": "workspace",
+        "step": "120"
+    },
+    {
+        "acc": "0.9537203907966614",
+        "rev": "workspace",
+        "step": "121"
+    },
+    {
+        "acc": "0.9521011114120483",
+        "rev": "workspace",
+        "step": "122"
+    },
+    {
+        "acc": "0.9521512389183044",
+        "rev": "workspace",
+        "step": "123"
+    },
+    {
+        "acc": "0.9536925554275513",
+        "rev": "workspace",
+        "step": "124"
+    },
+    {
+        "acc": "0.9517895579338074",
+        "rev": "workspace",
+        "step": "125"
+    },
+    {
+        "acc": "0.9535033702850342",
+        "rev": "workspace",
+        "step": "126"
+    },
+    {
+        "acc": "0.9530804753303528",
+        "rev": "workspace",
+        "step": "127"
+    },
+    {
+        "acc": "0.9529024362564087",
+        "rev": "workspace",
+        "step": "128"
+    },
+    {
+        "acc": "0.9523459672927856",
+        "rev": "workspace",
+        "step": "129"
+    },
+    {
+        "acc": "0.9529970288276672",
+        "rev": "workspace",
+        "step": "130"
+    },
+    {
+        "acc": "0.952590823173523",
+        "rev": "workspace",
+        "step": "131"
+    },
+    {
+        "acc": "0.9507156014442444",
+        "rev": "workspace",
+        "step": "132"
+    },
+    {
+        "acc": "0.9514055848121643",
+        "rev": "workspace",
+        "step": "133"
+    },
+    {
+        "acc": "0.9528189301490784",
+        "rev": "workspace",
+        "step": "134"
+    },
+    {
+        "acc": "0.9520232081413269",
+        "rev": "workspace",
+        "step": "135"
+    },
+    {
+        "acc": "0.9531639218330383",
+        "rev": "workspace",
+        "step": "136"
+    },
+    {
+        "acc": "0.9533253312110901",
+        "rev": "workspace",
+        "step": "137"
+    },
+    {
+        "acc": "0.9518841505050659",
+        "rev": "workspace",
+        "step": "138"
+    },
+    {
+        "acc": "0.9511162042617798",
+        "rev": "workspace",
+        "step": "139"
+    },
+    {
+        "acc": "0.9549612998962402",
+        "rev": "workspace",
+        "step": "140"
+    },
+    {
+        "acc": "0.9516504406929016",
+        "rev": "workspace",
+        "step": "141"
+    },
+    {
+        "acc": "0.9533753991127014",
+        "rev": "workspace",
+        "step": "142"
+    },
+    {
+        "acc": "0.9533253312110901",
+        "rev": "workspace",
+        "step": "143"
+    },
+    {
+        "acc": "0.9523404240608215",
+        "rev": "workspace",
+        "step": "144"
+    },
+    {
+        "acc": "0.95418781042099",
+        "rev": "workspace",
+        "step": "145"
+    },
+    {
+        "acc": "0.9536257982254028",
+        "rev": "workspace",
+        "step": "146"
+    },
+    {
+        "acc": "0.9531695246696472",
+        "rev": "workspace",
+        "step": "147"
+    },
+    {
+        "acc": "0.9531416893005371",
+        "rev": "workspace",
+        "step": "148"
+    },
+    {
+        "acc": "0.951900839805603",
+        "rev": "workspace",
+        "step": "149"
+    },
+    {
+        "acc": "0.9507656693458557",
+        "rev": "workspace",
+        "step": "150"
+    },
+    {
+        "acc": "0.9518396258354187",
+        "rev": "workspace",
+        "step": "151"
+    },
+    {
+        "acc": "0.9519842863082886",
+        "rev": "workspace",
+        "step": "152"
+    },
+    {
+        "acc": "0.9526242017745972",
+        "rev": "workspace",
+        "step": "153"
+    },
+    {
+        "acc": "0.9519509077072144",
+        "rev": "workspace",
+        "step": "154"
+    },
+    {
+        "acc": "0.9518006443977356",
+        "rev": "workspace",
+        "step": "155"
+    },
+    {
+        "acc": "0.9516838192939758",
+        "rev": "workspace",
+        "step": "156"
+    },
+    {
+        "acc": "0.9513666033744812",
+        "rev": "workspace",
+        "step": "157"
+    },
+    {
+        "acc": "0.9508936405181885",
+        "rev": "workspace",
+        "step": "158"
+    },
+    {
+        "acc": "0.9499644041061401",
+        "rev": "workspace",
+        "step": "159"
+    },
+    {
+        "acc": "0.9545161128044128",
+        "rev": "workspace",
+        "step": "160"
+    },
+    {
+        "acc": "0.9553452134132385",
+        "rev": "workspace",
+        "step": "161"
+    },
+    {
+        "acc": "0.9535312056541443",
+        "rev": "workspace",
+        "step": "162"
+    },
+    {
+        "acc": "0.9537704586982727",
+        "rev": "workspace",
+        "step": "163"
+    },
+    {
+        "acc": "0.9550336003303528",
+        "rev": "workspace",
+        "step": "164"
+    },
+    {
+        "acc": "0.9535200595855713",
+        "rev": "workspace",
+        "step": "165"
+    },
+    {
+        "acc": "0.9549223184585571",
+        "rev": "workspace",
+        "step": "166"
+    },
+    {
+        "acc": "0.9546607732772827",
+        "rev": "workspace",
+        "step": "167"
+    },
+    {
+        "acc": "0.9542768597602844",
+        "rev": "workspace",
+        "step": "168"
+    },
+    {
+        "acc": "0.9541432857513428",
+        "rev": "workspace",
+        "step": "169"
+    },
+    {
+        "acc": "0.9545272588729858",
+        "rev": "workspace",
+        "step": "170"
+    },
+    {
+        "acc": "0.9540542364120483",
+        "rev": "workspace",
+        "step": "171"
+    },
+    {
+        "acc": "0.9522179961204529",
+        "rev": "workspace",
+        "step": "172"
+    },
+    {
+        "acc": "0.9530526399612427",
+        "rev": "workspace",
+        "step": "173"
+    },
+    {
+        "acc": "0.9546997547149658",
+        "rev": "workspace",
+        "step": "174"
+    },
+    {
+        "acc": "0.953481137752533",
+        "rev": "workspace",
+        "step": "175"
+    },
+    {
+        "acc": "0.9549501538276672",
+        "rev": "workspace",
+        "step": "176"
+    },
+    {
+        "acc": "0.9546552300453186",
+        "rev": "workspace",
+        "step": "177"
+    },
+    {
+        "acc": "0.9529191255569458",
+        "rev": "workspace",
+        "step": "178"
+    },
+    {
+        "acc": "0.9530582427978516",
+        "rev": "workspace",
+        "step": "179"
+    },
+    {
+        "acc": "0.9562299847602844",
+        "rev": "workspace",
+        "step": "180"
+    },
+    {
+        "acc": "0.9526353478431702",
+        "rev": "workspace",
+        "step": "181"
+    },
+    {
+        "acc": "0.9552060961723328",
+        "rev": "workspace",
+        "step": "182"
+    },
+    {
+        "acc": "0.9547164440155029",
+        "rev": "workspace",
+        "step": "183"
+    },
+    {
+        "acc": "0.9540375471115112",
+        "rev": "workspace",
+        "step": "184"
+    },
+    {
+        "acc": "0.9555956125259399",
+        "rev": "workspace",
+        "step": "185"
+    },
+    {
+        "acc": "0.9553785920143127",
+        "rev": "workspace",
+        "step": "186"
+    },
+    {
+        "acc": "0.9548388719558716",
+        "rev": "workspace",
+        "step": "187"
+    },
+    {
+        "acc": "0.9545717835426331",
+        "rev": "workspace",
+        "step": "188"
+    },
+    {
+        "acc": "0.9532641172409058",
+        "rev": "workspace",
+        "step": "189"
+    },
+    {
+        "acc": "0.9518952369689941",
+        "rev": "workspace",
+        "step": "190"
+    },
+    {
+        "acc": "0.9533475637435913",
+        "rev": "workspace",
+        "step": "191"
+    },
+    {
+        "acc": "0.9536870121955872",
+        "rev": "workspace",
+        "step": "192"
+    },
+    {
+        "acc": "0.9541265964508057",
+        "rev": "workspace",
+        "step": "193"
+    },
+    {
+        "acc": "0.9539707899093628",
+        "rev": "workspace",
+        "step": "194"
+    },
+    {
+        "acc": "0.953125",
+        "rev": "workspace",
+        "step": "195"
+    },
+    {
+        "acc": "0.9531416893005371",
+        "rev": "workspace",
+        "step": "196"
+    },
+    {
+        "acc": "0.95295250415802",
+        "rev": "workspace",
+        "step": "197"
+    },
+    {
+        "acc": "0.9522792100906372",
+        "rev": "workspace",
+        "step": "198"
+    },
+    {
+        "acc": "0.9527243375778198",
+        "rev": "workspace",
+        "step": "199"
+    },
+    {
+        "acc": "0.9551115036010742",
+        "rev": "workspace",
+        "step": "200"
+    },
+    {
+        "acc": "0.9562967419624329",
+        "rev": "workspace",
+        "step": "201"
+    },
+    {
+        "acc": "0.9546440839767456",
+        "rev": "workspace",
+        "step": "202"
+    },
+    {
+        "acc": "0.9553006887435913",
+        "rev": "workspace",
+        "step": "203"
+    },
+    {
+        "acc": "0.9562855958938599",
+        "rev": "workspace",
+        "step": "204"
+    },
+    {
+        "acc": "0.9544048309326172",
+        "rev": "workspace",
+        "step": "205"
+    },
+    {
+        "acc": "0.9557569622993469",
+        "rev": "workspace",
+        "step": "206"
+    },
+    {
+        "acc": "0.9555010199546814",
+        "rev": "workspace",
+        "step": "207"
+    },
+    {
+        "acc": "0.9549556970596313",
+        "rev": "workspace",
+        "step": "208"
+    },
+    {
+        "acc": "0.9551560282707214",
+        "rev": "workspace",
+        "step": "209"
+    },
+    {
+        "acc": "0.9551782608032227",
+        "rev": "workspace",
+        "step": "210"
+    },
+    {
+        "acc": "0.9550502896308899",
+        "rev": "workspace",
+        "step": "211"
+    },
+    {
+        "acc": "0.9536202549934387",
+        "rev": "workspace",
+        "step": "212"
+    },
+    {
+        "acc": "0.9538650512695312",
+        "rev": "workspace",
+        "step": "213"
+    },
+    {
+        "acc": "0.9553563594818115",
+        "rev": "workspace",
+        "step": "214"
+    },
+    {
+        "acc": "0.9542211890220642",
+        "rev": "workspace",
+        "step": "215"
+    },
+    {
+        "acc": "0.9552227854728699",
+        "rev": "workspace",
+        "step": "216"
+    },
+    {
+        "acc": "0.9558404684066772",
+        "rev": "workspace",
+        "step": "217"
+    },
+    {
+        "acc": "0.9542378783226013",
+        "rev": "workspace",
+        "step": "218"
+    },
+    {
+        "acc": "0.9538650512695312",
+        "rev": "workspace",
+        "step": "219"
+    },
+    {
+        "acc": "0.956847608089447",
+        "rev": "workspace",
+        "step": "220"
+    },
+    {
+        "acc": "0.9542545676231384",
+        "rev": "workspace",
+        "step": "221"
+    },
+    {
+        "acc": "0.956152081489563",
+        "rev": "workspace",
+        "step": "222"
+    },
+    {
+        "acc": "0.9557347297668457",
+        "rev": "workspace",
+        "step": "223"
+    },
+    {
+        "acc": "0.9549111723899841",
+        "rev": "workspace",
+        "step": "224"
+    },
+    {
+        "acc": "0.9560908675193787",
+        "rev": "workspace",
+        "step": "225"
+    },
+    {
+        "acc": "0.9560797214508057",
+        "rev": "workspace",
+        "step": "226"
+    },
+    {
+        "acc": "0.955957293510437",
+        "rev": "workspace",
+        "step": "227"
+    },
+    {
+        "acc": "0.9551560282707214",
+        "rev": "workspace",
+        "step": "228"
+    },
+    {
+        "acc": "0.9542601704597473",
+        "rev": "workspace",
+        "step": "229"
+    },
+    {
+        "acc": "0.9530749320983887",
+        "rev": "workspace",
+        "step": "230"
+    },
+    {
+        "acc": "0.9542378783226013",
+        "rev": "workspace",
+        "step": "231"
+    },
+    {
+        "acc": "0.954710841178894",
+        "rev": "workspace",
+        "step": "232"
+    },
+    {
+        "acc": "0.9552450776100159",
+        "rev": "workspace",
+        "step": "233"
+    },
+    {
+        "acc": "0.954916775226593",
+        "rev": "workspace",
+        "step": "234"
+    },
+    {
+        "acc": "0.9544994235038757",
+        "rev": "workspace",
+        "step": "235"
+    },
+    {
+        "acc": "0.9541377425193787",
+        "rev": "workspace",
+        "step": "236"
+    },
+    {
+        "acc": "0.9536035656929016",
+        "rev": "workspace",
+        "step": "237"
+    },
+    {
+        "acc": "0.9537704586982727",
+        "rev": "workspace",
+        "step": "238"
+    },
+    {
+        "acc": "0.9525462985038757",
+        "rev": "workspace",
+        "step": "239"
+    }
+]
+    },
+    "title": "val/step/acc",
+    "width": 300,
+    "height": 300,
+    "params": [
+        {
+            "name": "smooth",
+            "value": 0.001,
+            "bind": {
+                "input": "range",
+                "min": 0.001,
+                "max": 1,
+                "step": 0.001
+            }
+        }
+    ],
+    "layer": [
+        {
+            "mark": "line",
+            "encoding": {
+                "x": {
+                    "field": "step",
+                    "type": "quantitative",
+                    "title": "step"
+                },
+                "y": {
+                    "field": "acc",
+                    "type": "quantitative",
+                    "title": "acc",
+                    "scale": {
+                        "zero": false
+                    }
+                },
+                "color": {
+                    "field": "rev",
+                    "type": "nominal"
+                }
+            },
+            "transform": [
+                {
+                    "loess": "acc",
+                    "on": "step",
+                    "groupby": [
+                        "rev",
+                        "filename",
+                        "field",
+                        "filename::field"
+                    ],
+                    "bandwidth": {
+                        "signal": "smooth"
+                    }
+                }
+            ]
+        },
+        {
+            "mark": {
+                "type": "point",
+                "tooltip": {
+                    "content": "data"
+                }
+            },
+            "encoding": {
+                "x": {
+                    "field": "step",
+                    "type": "quantitative",
+                    "title": "step"
+                },
+                "y": {
+                    "field": "acc",
+                    "type": "quantitative",
+                    "title": "acc",
+                    "scale": {
+                        "zero": false
+                    }
+                },
+                "color": {
+                    "field": "rev",
+                    "type": "nominal"
+                }
+            }
+        }
+    ]
+}
+;
+            vegaEmbed('#static_val_step_acc', spec);
+        </script>
+    </div>
+    
+</body>
+</html>
