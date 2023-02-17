@@ -158,18 +158,22 @@ val_loader = torch.utils.data.DataLoader(val, batch_size=batch_size)
 
 exp = Live("results", save_dvc_exp=True, dvcyaml=False)
 live = DVCLiveLogger(report=None, experiment=exp)
-checkpoint = pl.callbacks.ModelCheckpoint(
-        dirpath="model",
-        filename="model",
-        monitor="val_acc",
-        mode="max",
-        save_weights_only=True, every_n_epochs=1)
+# checkpoint = pl.callbacks.ModelCheckpoint(
+#         dirpath="model",
+#         filename="model",
+#         monitor="val_acc",
+#         mode="max",
+#         save_weights_only=True,
+#         every_n_epochs=1,
+#         save_top_k=0)
 timer = pl.callbacks.Timer(duration=duration)
 
 trainer = pl.Trainer(max_epochs=5, logger=[live],
-                     callbacks=[timer, checkpoint])
+                     # callbacks=[timer, checkpoint])
+                     callbacks=[timer])
 trainer.fit(model=arch, train_dataloaders=train_loader,
         val_dataloaders=val_loader)
+torch.save(arch.state_dict(), "model.pt")
 
 
 # Save predictions
