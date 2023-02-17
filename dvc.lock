@@ -20,8 +20,8 @@ stages:
       md5: c81225a6f6e00dfa0fcdbbf3862528c2
       size: 29787538
     - path: train.py
-      md5: 23975403333c4535a7f89a9bd8522daa
-      size: 6443
+      md5: 33d70719c1311d45dbc29a2d1b06d64d
+      size: 7130
     params:
       params.py:
         batch_size: 512
@@ -35,10 +35,14 @@ stages:
     - path: model/model.ckpt
       md5: 6e7bd20ccdb59b6531ee10b99d56ff4d
       size: 349185
+    - path: predictions
+      md5: 58c862134370523e942a861b38438486.dir
+      size: 3510
+      nfiles: 10
     - path: results/metrics.json
-      md5: c15d9e22132018f5f4986c87d1bd72b0
-      size: 509
+      md5: aa4c52e2c25a428121c77bd437d3027a
+      size: 508
     - path: results/plots
-      md5: c6e2582f5b22d2a1d03bf54a8d9548d8.dir
-      size: 12556
+      md5: a9e1a2b2be8aea6ab65dd1d935cba38c.dir
+      size: 10423
       nfiles: 9
