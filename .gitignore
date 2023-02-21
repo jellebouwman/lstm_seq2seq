@@ -1,3 +1,4 @@
 __pycache__/
 /fra.txt
 .vscode/
+lightning_logs/
