@@ -3,8 +3,6 @@ import numpy as np
 import torch
 import pytorch_lightning as pl
 import torchmetrics
-from dvclive import Live
-from dvclive.lightning import DVCLiveLogger
 
 from params import *
 
@@ -156,23 +154,9 @@ train, val = torch.utils.data.random_split(combined_data, [train_len, val_len],
 train_loader = torch.utils.data.DataLoader(train, batch_size=batch_size)
 val_loader = torch.utils.data.DataLoader(val, batch_size=batch_size)
 
-exp = Live("results", save_dvc_exp=True, dvcyaml=False)
-live = DVCLiveLogger(report=None, experiment=exp)
-# checkpoint = pl.callbacks.ModelCheckpoint(
-#         dirpath="model",
-#         filename="model",
-#         monitor="val_acc",
-#         mode="max",
-#         save_weights_only=True,
-#         every_n_epochs=1,
-#         save_top_k=0)
-timer = pl.callbacks.Timer(duration=duration)
-
-trainer = pl.Trainer(max_epochs=5, logger=[live],
-                     # callbacks=[timer, checkpoint])
-                     callbacks=[timer])
+trainer = pl.Trainer(max_epochs=5)
 trainer.fit(model=arch, train_dataloaders=train_loader,
-        val_dataloaders=val_loader)
+            val_dataloaders=val_loader)
 torch.save(arch.state_dict(), "model.pt")
 
 

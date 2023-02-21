@@ -1,5 +1,0 @@
-[core]
-    remote = myremote
-['remote "myremote"']
-    url = s3://dave-sandbox-versioning/test/lstm_seq2seq
-    version_aware = true
