@@ -1,6 +1,5 @@
 stages:
   download:
-    cmd:
     - curl -O http://www.manythings.org/anki/fra-eng.zip
     - unzip fra-eng.zip
     - rm _about.txt fra-eng.zip
