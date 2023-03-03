@@ -117,8 +117,8 @@ class LSTMSeqToSeq(pl.LightningModule):
         # Log metrics
         loss = torch.nn.functional.cross_entropy(out, y)
         acc = self.acc(out, y)
-        self.log("val_loss", loss, on_step=False, on_epoch=True)
-        self.log("val_acc", acc, on_step=False, on_epoch=True)
+        self.log("val_loss", loss, on_step=True, on_epoch=True)
+        self.log("val_acc", acc, on_step=True, on_epoch=True)
 
     def configure_optimizers(self):
         optimizer = torch.optim.RMSprop(self.parameters(), lr=lr)
@@ -161,7 +161,7 @@ checkpoint = pl.callbacks.ModelCheckpoint(
         save_weights_only=True, every_n_epochs=1)
 timer = pl.callbacks.Timer(duration=duration)
 
-trainer = pl.Trainer(max_epochs=-1, logger=[live],
+trainer = pl.Trainer(max_epochs=2, logger=[live],
                      callbacks=[timer, checkpoint])
 trainer.fit(model=arch, train_dataloaders=train_loader,
         val_dataloaders=val_loader)
