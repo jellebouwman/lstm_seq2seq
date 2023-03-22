@@ -18,7 +18,6 @@ stages:
     outs:
     - model/model.ckpt:
         persist: true
-        checkpoint: true
     - results/metrics.json:
         cache: false
         persist: true
