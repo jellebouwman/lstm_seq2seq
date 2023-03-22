@@ -44,7 +44,7 @@ jobs:
           pip install --upgrade -r requirements.txt
 
           dvc pull --allow-missing
-          dvc exp run
+          dvc exp run -S model=full
           dvc push
  
           git add .
