@@ -3,21 +3,22 @@ import numpy as np
 import torch
 import pytorch_lightning as pl
 import torchmetrics
+from dvc.api import params_show
 from dvclive import Live
 from dvclive.lightning import DVCLiveLogger
 
-from params import *
+params = params_show()
 
 # Vectorize the data.
 input_texts = []
 target_texts = []
 input_characters = set()
 target_characters = set()
-with open(data_path, "r", encoding="utf-8") as f:
+with open(params["data_path"], "r", encoding="utf-8") as f:
     lines = f.read().split("\n")[:-1]
-np.random.seed(seed)
+np.random.seed(params["seed"])
 np.random.shuffle(lines)
-for line in lines[: min(num_samples, len(lines) - 1)]:
+for line in lines[: min(params["num_samples"], len(lines) - 1)]:
     input_text, target_text, _ = line.split("\t")
     for char in input_text:
         if char not in input_characters:
@@ -76,6 +77,7 @@ for i, (input_text, target_text) in enumerate(zip(input_texts, target_texts)):
 class LSTMSeqToSeq(pl.LightningModule):
     def __init__(self):
         super().__init__()
+        latent_dim = params["model"]["latent_dim"]
         self.encoder_embedding = torch.nn.Embedding(num_encoder_tokens, latent_dim)
         self.encoder = torch.nn.LSTM(latent_dim, latent_dim, batch_first=True)
         self.decoder_embedding = torch.nn.Embedding(num_decoder_tokens,
@@ -121,7 +123,7 @@ class LSTMSeqToSeq(pl.LightningModule):
         self.log("val_acc", acc, on_step=False, on_epoch=True)
 
     def configure_optimizers(self):
-        optimizer = torch.optim.RMSprop(self.parameters(), lr=lr)
+        optimizer = torch.optim.RMSprop(self.parameters(), lr=params["model"]["lr"])
         return optimizer
 
 
@@ -147,7 +149,8 @@ combined_data = CustomDataset(encoder_input_data, decoder_input_data, decoder_ta
 train_len = int(len(combined_data)*0.8)
 val_len = len(combined_data) - train_len
 train, val = torch.utils.data.random_split(combined_data, [train_len, val_len],
-        generator=torch.Generator().manual_seed(seed))
+        generator=torch.Generator().manual_seed(params["seed"]))
+batch_size = params["model"]["batch_size"]
 train_loader = torch.utils.data.DataLoader(train, batch_size=batch_size)
 val_loader = torch.utils.data.DataLoader(val, batch_size=batch_size)
 
@@ -159,9 +162,9 @@ checkpoint = pl.callbacks.ModelCheckpoint(
         monitor="val_acc",
         mode="max",
         save_weights_only=True, every_n_epochs=1)
-timer = pl.callbacks.Timer(duration=duration)
+timer = pl.callbacks.Timer(duration=params["model"]["duration"])
 
-trainer = pl.Trainer(max_epochs=-1, logger=[live],
+trainer = pl.Trainer(max_epochs=params["model"]["max_epochs"], logger=[live],
                      callbacks=[timer, checkpoint])
 trainer.fit(model=arch, train_dataloaders=train_loader,
         val_dataloaders=val_loader)

@@ -14,7 +14,7 @@ stages:
     - fra.txt
     - train.py
     params:
-    - params.py:
+    - params.yaml:
     outs:
     - model/model.ckpt:
         persist: true
