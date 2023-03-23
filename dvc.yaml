@@ -14,11 +14,10 @@ stages:
     - fra.txt
     - train.py
     params:
-    - params.py:
+    - params.yaml:
     outs:
     - model/model.ckpt:
         persist: true
-        checkpoint: true
     - results/metrics.json:
         cache: false
         persist: true

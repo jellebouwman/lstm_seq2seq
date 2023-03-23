@@ -1,0 +1,5 @@
+defaults:
+  - model: small
+data_path: fra.txt
+num_samples: 100000
+seed: 423
