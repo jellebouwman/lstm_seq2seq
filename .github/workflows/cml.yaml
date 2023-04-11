@@ -45,7 +45,7 @@ jobs:
 
           dvc pull --allow-missing
           dvc exp run -S model=small
-          dvc exp push -v --rev HEAD origin
+          # dvc exp push -v --rev HEAD origin
  
           git add .
           git commit -m "experiment results"
