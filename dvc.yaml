@@ -24,3 +24,16 @@ stages:
     - results/plots:
         cache: false
         persist: true
+plots:
+- Accuracy:
+    x: step
+    y:
+      results/plots/metrics/train/epoch/acc.tsv: acc
+      results/plots/metrics/val/acc.tsv: acc
+    y_label: Accuracy
+- Loss:
+    x: step
+    y:
+      results/plots/metrics/train/epoch/loss.tsv: loss
+      results/plots/metrics/val/loss.tsv: loss
+    y_label: Accuracy
