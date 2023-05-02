@@ -1,9 +1,9 @@
 model:
   batch_size: 512
-  latent_dim: 64
+  latent_dim: 8
   lr: 0.01
   duration: 00:00:30:00
-  max_epochs: -1
+  max_epochs: 2
 data_path: fra.txt
 num_samples: 100000
 seed: 423
