@@ -86,7 +86,7 @@ class LSTMSeqToSeq(pl.LightningModule):
 
         self.out = torch.nn.Linear(latent_dim, num_decoder_tokens)
         self.acc = torchmetrics.classification.MulticlassAccuracy(
-                num_decoder_tokens, average="micro")
+                num_decoder_tokens, average="macro")
 
     def forward(self, x_encoder, x_decoder):
         encoder_embedded = self.encoder_embedding(x_encoder)
