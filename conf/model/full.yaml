@@ -1,5 +1,6 @@
 batch_size: 512
 latent_dim: 64
-lr: 0.01
 duration: "00:00:30:00"
 max_epochs: -1
+optim:
+  lr: 0.01

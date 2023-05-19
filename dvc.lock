@@ -20,17 +20,18 @@ stages:
       md5: 62fa1633dbf3f3d56cfb695f5f4fabe8
       size: 32822533
     - path: train.py
-      md5: 06cf41493f48d027ed990f2a2aa4fb16
-      size: 6745
+      md5: 86ea72f877ec75d99b1d2b389d80e3b8
+      size: 6994
     params:
       params.yaml:
         data_path: fra.txt
         model:
           batch_size: 512
-          latent_dim: 64
-          lr: 0.01
+          latent_dim: 8
           duration: 00:00:30:00
-          max_epochs: -1
+          max_epochs: 2
+          optim:
+            lr: 0.01
         num_samples: 100000
         seed: 423
     outs:
@@ -38,9 +39,9 @@ stages:
       md5: 0f6376fb11a6ef0fdeba407badb70726
       size: 108609
     - path: results/metrics.json
-      md5: dca154aa3352a1ed6501ddffec068de8
-      size: 363
+      md5: 2299d804ce6feb7f2a982ca887b79796
+      size: 368
     - path: results/plots
-      md5: 6e9d891e553fcfe06b763fb0e29062d9.dir
-      size: 2962
+      md5: 44631913594071b909fad6b21dfd005b.dir
+      size: 598
       nfiles: 7

@@ -75,16 +75,17 @@ for i, (input_text, target_text) in enumerate(zip(input_texts, target_texts)):
 
 # Define the model 
 class LSTMSeqToSeq(pl.LightningModule):
-    def __init__(self):
+    def __init__(self, latent_dim, optim_params):
         super().__init__()
-        latent_dim = params["model"]["latent_dim"]
-        self.encoder_embedding = torch.nn.Embedding(num_encoder_tokens, latent_dim)
-        self.encoder = torch.nn.LSTM(latent_dim, latent_dim, batch_first=True)
+        # Log parameters (saves them to self.hparams)
+        self.save_hyperparameters()
+        self.encoder_embedding = torch.nn.Embedding(num_encoder_tokens, self.hparams.latent_dim)
+        self.encoder = torch.nn.LSTM(self.hparams.latent_dim, self.hparams.latent_dim, batch_first=True)
         self.decoder_embedding = torch.nn.Embedding(num_decoder_tokens,
-                latent_dim)
-        self.decoder = torch.nn.LSTM(latent_dim, latent_dim, batch_first=True)
+                self.hparams.latent_dim)
+        self.decoder = torch.nn.LSTM(self.hparams.latent_dim, self.hparams.latent_dim, batch_first=True)
 
-        self.out = torch.nn.Linear(latent_dim, num_decoder_tokens)
+        self.out = torch.nn.Linear(self.hparams.latent_dim, num_decoder_tokens)
         self.acc = torchmetrics.classification.MulticlassAccuracy(
                 num_decoder_tokens, average="macro")
 
@@ -123,11 +124,14 @@ class LSTMSeqToSeq(pl.LightningModule):
         self.log("val_acc", acc, on_step=False, on_epoch=True)
 
     def configure_optimizers(self):
-        optimizer = torch.optim.RMSprop(self.parameters(), lr=params["model"]["lr"])
+        optimizer = torch.optim.RMSprop(self.parameters(), **self.hparams.optim_params)
         return optimizer
 
 
-arch = LSTMSeqToSeq()
+arch = LSTMSeqToSeq(
+    latent_dim=params["model"]["latent_dim"],
+    optim_params=params["model"]["optim"],
+)
 
 # load the data
 class CustomDataset(torch.utils.data.Dataset):
