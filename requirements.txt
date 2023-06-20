@@ -1,6 +1,6 @@
 dvc[s3]>=2.38.1
 dvclive>=1.3.0
 numpy
-pytorch-lightning
+lightning
 torch
 torchmetrics
