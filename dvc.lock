@@ -7,6 +7,7 @@ stages:
     - rm _about.txt fra-eng.zip
     deps:
     - path: http://www.manythings.org/anki/fra-eng.zip
+      hash: md5
       checksum: '233560121845505482666094644464373105096'
       size: 7420323
     outs:
