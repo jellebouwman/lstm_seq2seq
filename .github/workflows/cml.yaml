@@ -33,7 +33,6 @@ jobs:
  
       - name: cml
         env:
-          REPO_TOKEN: ${{ secrets.GITHUB_TOKEN }}
           DVCLIVE_LOG_LEVEL: DEBUG
           DVC_STUDIO_TOKEN: ${{ secrets.STUDIO_TOKEN }}
         run: |
