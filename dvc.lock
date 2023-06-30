@@ -31,7 +31,7 @@ stages:
           batch_size: 512
           latent_dim: 8
           duration: 00:00:30:00
-          max_epochs: 7
+          max_epochs: 3
           optim:
             lr: 0.01
         num_samples: 5000
@@ -39,9 +39,9 @@ stages:
     outs:
     - path: dvclive/first_stage/plots
       hash: md5
-      md5: 2776f278378a28702f69c73d974079fc.dir
-      size: 826
-      nfiles: 7
+      md5: 5dca1ba1915ef25c8cea0b5c17be8b8f.dir
+      size: 348
+      nfiles: 5
     - path: model/model.ckpt
       md5: 20b304c5ca340af0321ece421cb5a45d
       size: 19969
