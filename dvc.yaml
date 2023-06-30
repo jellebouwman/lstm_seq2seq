@@ -18,3 +18,4 @@ stages:
     outs:
     - model/model.ckpt:
         persist: true
+    - dvclive/first_stage/plots
